@@ -4,6 +4,14 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-11-06
+
+### Changed
+- Smoothness now has its own section (it applies to vertical and horizontal scrolling).
+
+### Fixed
+- The window header no longer shifts the tabs when the subtitle changes.
+
 ## [0.3.1] - 2026-11-06
 
 ### Added

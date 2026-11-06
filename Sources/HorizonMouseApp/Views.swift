@@ -23,7 +23,7 @@ struct RootView: View {
             Divider()
             footer
         }
-        .frame(minWidth: 900, minHeight: 640)
+        .frame(minWidth: 940, minHeight: 640)
         .alert(model.alert?.title ?? "", isPresented: Binding(get: { model.alert != nil }, set: { if !$0 { model.alert = nil } })) {
             Button("OK") { model.alert = nil }
         } message: { Text(model.alert?.message ?? "") }
@@ -32,9 +32,11 @@ struct RootView: View {
     private var header: some View {
         HStack(alignment: .center, spacing: 20) {
             VStack(alignment: .leading, spacing: 3) {
-                Text(model.tab.heading.0).font(.system(size: 24, weight: .bold))
-                Text(model.tab.heading.1).foregroundStyle(.secondary)
+                Text(model.tab.heading.0).font(.system(size: 24, weight: .bold)).lineLimit(1).minimumScaleFactor(0.7)
+                Text(model.tab.heading.1).foregroundStyle(.secondary).lineLimit(2).minimumScaleFactor(0.85)
             }
+            // Fixed width and height: the tab picker must not move when the subtitle changes.
+            .frame(width: 250, height: 60, alignment: .topLeading)
             Picker("", selection: $model.tab) {
                 ForEach(AppTab.allCases) { Text($0.title).tag($0) }
             }
@@ -291,8 +293,6 @@ struct ScrollSettingsView: View {
                 SliderRow(title: L("Acceleration"), value: model.scrollAcceleration, range: 0...100,
                           label: model.scrollAcceleration.wrappedValue == 0 ? L("Off") : "\(Int(model.scrollAcceleration.wrappedValue))%",
                           low: L("Off"), high: L("Fast spins go farther"))
-                SliderRow(title: L("Smoothness"), value: model.scrollSmoothness, range: 0...100,
-                          label: "\(Int(model.scrollSmoothness.wrappedValue))%", low: L("Immediate"), high: L("Longer glide"))
                 Toggle(isOn: model.natural) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(L("Natural scrolling")).fontWeight(.medium)
@@ -300,6 +300,10 @@ struct ScrollSettingsView: View {
                             .font(.caption).foregroundStyle(.secondary)
                     }
                 }
+            }
+            SettingsSection(title: L("Smoothness"), detail: L("Vertical and horizontal scrolling")) {
+                SliderRow(title: L("Smoothness"), value: model.scrollSmoothness, range: 0...100,
+                          label: "\(Int(model.scrollSmoothness.wrappedValue))%", low: L("Immediate"), high: L("Longer glide"))
             }
             SettingsSection(title: L("Side wheel"), detail: L("Switch Desktops")) {
                 Toggle(isOn: model.fullSwitch) {
