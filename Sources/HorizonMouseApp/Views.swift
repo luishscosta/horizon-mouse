@@ -57,7 +57,7 @@ struct RootView: View {
             Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
             VStack(alignment: .leading, spacing: 2) {
                 Text(L("Horizon Mouse doesn't have Accessibility yet")).fontWeight(.semibold)
-                Text(L("Without it, desktop switching, scrolling and mouse buttons stay off. Each newly installed version must be authorized again."))
+                Text(L("Without it, desktop switching, scrolling and mouse buttons stay off."))
                     .font(.caption).foregroundStyle(.secondary)
             }
             Spacer()
