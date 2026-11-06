@@ -254,6 +254,31 @@ final class MouseKitTests: XCTestCase {
         XCTAssertEqual(VerticalScrollState.clampSpeed(5), 1)
     }
 
+    func testAccelerationAndSmoothness() {
+        // Off: identical to the plain scale, however fast the wheel spins.
+        var plain = VerticalScrollState()
+        for i in 0..<10 { XCTAssertTrue(plain.move(pixels: 40, speed: 1, acceleration: 0, at: Double(i) * 0.01)) }
+        XCTAssertEqual(plain.residualPixels, 400, accuracy: 0.000001)
+        // On: a fast spin travels farther, a lone notch does not.
+        var fast = VerticalScrollState()
+        for i in 0..<10 { XCTAssertTrue(fast.move(pixels: 40, speed: 1, acceleration: 1, at: Double(i) * 0.01)) }
+        XCTAssertGreaterThan(fast.residualPixels, 800)
+        XCTAssertLessThan(fast.residualPixels, 1600.001)
+        var slow = VerticalScrollState()
+        XCTAssertTrue(slow.move(pixels: 10, speed: 1, acceleration: 1, at: 0))
+        XCTAssertLessThan(slow.residualPixels, 10.8)
+        // Gain fades once the wheel pauses.
+        XCTAssertTrue(slow.move(pixels: 10, speed: 1, acceleration: 1, at: 5))
+        XCTAssertLessThan(slow.residualPixels, 21.6)
+        // Smoothness: less glide emits more in the first frame.
+        var quick = VerticalScrollState(), glide = VerticalScrollState()
+        XCTAssertTrue(quick.move(pixels: 400, speed: 1, at: 0))
+        XCTAssertTrue(glide.move(pixels: 400, speed: 1, at: 0))
+        XCTAssertGreaterThan(Double(quick.frame(at: 0.01, smoothness: 0)), Double(glide.frame(at: 0.01, smoothness: 1)))
+        XCTAssertEqual(VerticalScrollState.clampUnit(.nan, default: 0.5), 0.5)
+        XCTAssertEqual(VerticalScrollState.clampUnit(3, default: 0), 1)
+    }
+
     func testVerticalFilteringPreservesOtherInput() {
         let wheel = WheelInput(horizontal: 0, vertical: -20)
         XCTAssertEqual(wheel.verticalPixels(capable: true), -20)
@@ -560,6 +585,7 @@ struct MouseSelfCheck {
         checks.testIdleDisconnectCancelsRetriesAndRequiresExplicitReactivation()
         checks.testVerticalSmoothingIsSlowerAndPreservesScaledDisplacement()
         checks.testVerticalSubpixelsSpeedChangesAndCancellation()
+        checks.testAccelerationAndSmoothness()
         checks.testVerticalFilteringPreservesOtherInput()
         checks.testVerticalEventPreservesNaturalScrollMetadataAndContext()
         checks.testActiveFilterNeedsAccessibilityRatherThanListenPermission()
@@ -578,7 +604,7 @@ struct MouseSelfCheck {
         checks.testHorizontalScrollKeyMatchesOnlyChosenModifier()
         checks.testHoldingTracksPressUntilReleaseIsSeen()
         checks.testRecoveringLostReleaseFinishesPendingGesture()
-        print("PASS: 29 mouse behavior groups")
+        print("PASS: 30 mouse behavior groups")
     }
 }
 #endif

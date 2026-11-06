@@ -19,6 +19,16 @@ public final class MouseController {
         get { VerticalScrollState.clampSpeed(UserDefaults.standard.object(forKey: "Mesa.mouse.verticalSpeed") as? Double ?? 0.1) }
         set { UserDefaults.standard.set(VerticalScrollState.clampSpeed(newValue), forKey: "Mesa.mouse.verticalSpeed"); onChange?() }
     }
+    /// 0 = follow the wheel as the system delivers it; 1 = fast spins scroll up to 4x farther.
+    public var scrollAcceleration: Double {
+        get { VerticalScrollState.clampUnit(UserDefaults.standard.object(forKey: "Mesa.mouse.scrollAcceleration") as? Double ?? 0, default: 0) }
+        set { UserDefaults.standard.set(VerticalScrollState.clampUnit(newValue, default: 0), forKey: "Mesa.mouse.scrollAcceleration"); onChange?() }
+    }
+    /// 0 = nearly immediate, 1 = longest glide.
+    public var scrollSmoothness: Double {
+        get { VerticalScrollState.clampUnit(UserDefaults.standard.object(forKey: "Mesa.mouse.scrollSmoothness") as? Double ?? 0.5, default: 0.5) }
+        set { UserDefaults.standard.set(VerticalScrollState.clampUnit(newValue, default: 0.5), forKey: "Mesa.mouse.scrollSmoothness"); onChange?() }
+    }
     public var horizontalSpeed: Double {
         get { VerticalScrollState.clampSpeed(UserDefaults.standard.object(forKey: "Mesa.mouse.horizontalSpeed") as? Double ?? 0.1) }
         set { UserDefaults.standard.set(VerticalScrollState.clampSpeed(newValue), forKey: "Mesa.mouse.horizontalSpeed"); onChange?() }
@@ -327,7 +337,7 @@ public final class MouseController {
             if verticalSender != 0 && verticalSender != sender { capture.vertical.cancel() }
             // Keep pending motion's modifiers and natural-scroll interpretation together.
             if capture.vertical.isActive && verticalMetadata?.isCompatible(with: metadata) == false { return passthrough }
-            guard capture.vertical.move(pixels: pixels, speed: verticalSpeed, at: now) else { return passthrough }
+            guard capture.vertical.move(pixels: pixels, speed: verticalSpeed, acceleration: scrollAcceleration, at: now) else { return passthrough }
             verticalSender = sender
             verticalMetadata = metadata
             startFrames()
@@ -631,7 +641,7 @@ public final class MouseController {
             }
             if capture.endRetry.observe(output) { updateEndResends() }
         }
-        let pixels = capture.vertical.frame(at: now)
+        let pixels = capture.vertical.frame(at: now, smoothness: scrollSmoothness)
         if pixels != 0 {
             guard let event = verticalMetadata?.makeEvent(pixels: pixels) else {
                 deactivate()
@@ -641,7 +651,7 @@ public final class MouseController {
             }
             event.post(tap: .cgSessionEventTap)
         }
-        let pixelsX = capture.horizontal.frame(at: now)
+        let pixelsX = capture.horizontal.frame(at: now, smoothness: scrollSmoothness)
         if pixelsX != 0 {
             guard let event = horizontalMetadata?.makeEvent(pixels: 0, horizontal: pixelsX) else {
                 deactivate()

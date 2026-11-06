@@ -175,14 +175,25 @@ struct VerticalScrollState {
     private var pendingPixels = 0.0
     private var fractionalPixels = 0.0
     private var lastFrame = 0.0
+    private var recentInput = 0.0
+    private var lastInput = 0.0
     var residualPixels: Double { pendingPixels + fractionalPixels }
 
     static func clampSpeed(_ value: Double) -> Double {
         value.isFinite ? min(max(value, 0.1), 1) : 0.1
     }
 
-    mutating func move(pixels: Double, speed: Double, at time: Double) -> Bool {
-        let scaled = pixels * Self.clampSpeed(speed)
+    static func clampUnit(_ value: Double, default fallback: Double) -> Double {
+        value.isFinite ? min(max(value, 0), 1) : fallback
+    }
+
+    /// Wheel travel over the last ~0.15 s raises the gain up to 4x at full acceleration; a lone notch stays at 1x.
+    mutating func move(pixels: Double, speed: Double, acceleration: Double = 0, at time: Double) -> Bool {
+        guard pixels.isFinite else { return false }
+        recentInput = recentInput * exp(-max(time - lastInput, 0) / 0.15) + abs(pixels)
+        lastInput = time
+        let gain = 1 + 3 * Self.clampUnit(acceleration, default: 0) * min(recentInput / 400, 1)
+        let scaled = pixels * Self.clampSpeed(speed) * gain
         guard scaled.isFinite, scaled != 0,
               abs(pendingPixels + scaled) < Double(Int32.max) else { return false }
         if !isActive { lastFrame = time }
@@ -191,11 +202,12 @@ struct VerticalScrollState {
         return true
     }
 
-    mutating func frame(at time: Double) -> Int32 {
+    /// `smoothness` 0...1 maps to a 0.02...0.14 s time constant (0.5 = 0.08 s).
+    mutating func frame(at time: Double, smoothness: Double = 0.5) -> Int32 {
         guard isActive else { return 0 }
         let elapsed = min(max(time - lastFrame, 0), 0.1)
         lastFrame = time
-        var step = pendingPixels * (1 - exp(-elapsed / 0.08))
+        var step = pendingPixels * (1 - exp(-elapsed / (0.02 + 0.12 * Self.clampUnit(smoothness, default: 0.5))))
         if abs(pendingPixels - step) < 0.001 { step = pendingPixels }
         pendingPixels -= step
         fractionalPixels += step

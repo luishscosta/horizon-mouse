@@ -125,3 +125,9 @@
 "While the key is held, the side wheel scrolls content sideways at this speed, without switching desktops." = "キーを押している間、サイドホイールはこの速度でコンテンツを横にスクロールし、デスクトップは切り替えません。";
 "Without it, desktop switching, scrolling and mouse buttons stay off." = "これがないと、デスクトップの切り替え、スクロール、マウスのボタンはオフのままです。";
 "Without the icon, open Horizon Mouse again from the Applications folder to see this window." = "アイコンがない場合は、アプリケーションフォルダから Horizon Mouse をもう一度開くと、このウインドウが表示されます。";
+"Acceleration" = "加速";
+"Off" = "オフ";
+"Fast spins go farther" = "素早く回すと遠くまで進む";
+"Smoothness" = "滑らかさ";
+"Immediate" = "即時";
+"Longer glide" = "長く滑る";

@@ -4,6 +4,12 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-11-06
+
+### Added
+- Scroll **Acceleration** (off by default): fast wheel spins travel farther, up to 4x, so scrolling can now exceed the system speed. A lone notch is unchanged.
+- Scroll **Smoothness** slider for the glide length (default matches the previous behavior).
+
 ## [0.3.0] - 2026-11-06
 
 ### Added

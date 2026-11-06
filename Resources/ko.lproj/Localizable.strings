@@ -125,3 +125,9 @@
 "While the key is held, the side wheel scrolls content sideways at this speed, without switching desktops." = "키를 누르고 있는 동안 사이드 휠이 이 속도로 콘텐츠를 옆으로 스크롤하며 데스크탑은 전환하지 않습니다.";
 "Without it, desktop switching, scrolling and mouse buttons stay off." = "이 권한이 없으면 데스크탑 전환, 스크롤, 마우스 버튼이 꺼진 상태로 유지됩니다.";
 "Without the icon, open Horizon Mouse again from the Applications folder to see this window." = "아이콘이 없으면 응용 프로그램 폴더에서 Horizon Mouse를 다시 열어 이 창을 확인하세요.";
+"Acceleration" = "가속";
+"Off" = "끔";
+"Fast spins go farther" = "빠르게 돌리면 더 멀리 이동";
+"Smoothness" = "부드러움";
+"Immediate" = "즉시";
+"Longer glide" = "더 길게 미끄러짐";

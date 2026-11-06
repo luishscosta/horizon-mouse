@@ -65,7 +65,7 @@ Actions: mouse default, Back (⌘[), Forward (⌘]), a recorded shortcut, Missio
 
 - **One desktop per roll** completes a switch on every roll of the side wheel. With it off, **Steps per desktop** sets the sensitivity.
 - Holding a chosen key (⌥ by default) turns the side wheel into horizontal scrolling at the **Horizontal speed** (default 10%).
-- On the **Scroll** tab, **Vertical speed** (default 10%) and **Natural scrolling** apply to the mouse only.
+- On the **Scroll** tab, **Vertical speed** (100% = system speed, default 10%), **Acceleration** (off by default; fast spins travel farther), **Smoothness** and **Natural scrolling** apply to the mouse only.
 
 ### Settings
 

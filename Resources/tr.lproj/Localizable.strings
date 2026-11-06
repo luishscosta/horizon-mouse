@@ -125,3 +125,9 @@
 "While the key is held, the side wheel scrolls content sideways at this speed, without switching desktops." = "Tuş basılıyken yan tekerlek içeriği bu hızla yana kaydırır, masaüstünü değiştirmez.";
 "Without it, desktop switching, scrolling and mouse buttons stay off." = "Bu olmadan masaüstü geçişi, kaydırma ve fare düğmeleri kapalı kalır.";
 "Without the icon, open Horizon Mouse again from the Applications folder to see this window." = "Simge yokken bu pencereyi görmek için Horizon Mouse'u Uygulamalar klasöründen yeniden açın.";
+"Acceleration" = "Hızlanma";
+"Off" = "Kapalı";
+"Fast spins go farther" = "Hızlı çevirme daha uzağa gider";
+"Smoothness" = "Yumuşaklık";
+"Immediate" = "Anında";
+"Longer glide" = "Daha uzun kayma";

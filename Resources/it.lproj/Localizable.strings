@@ -125,3 +125,9 @@
 "While the key is held, the side wheel scrolls content sideways at this speed, without switching desktops." = "Finché il tasto è premuto, la rotellina laterale fa scorrere il contenuto di lato a questa velocità, senza cambiare scrivania.";
 "Without it, desktop switching, scrolling and mouse buttons stay off." = "Senza di essa, cambio di scrivania, scorrimento e pulsanti del mouse restano disattivati.";
 "Without the icon, open Horizon Mouse again from the Applications folder to see this window." = "Senza l'icona, riapri Horizon Mouse dalla cartella Applicazioni per vedere questa finestra.";
+"Acceleration" = "Accelerazione";
+"Off" = "Disattivata";
+"Fast spins go farther" = "Le rotazioni rapide vanno più lontano";
+"Smoothness" = "Fluidità";
+"Immediate" = "Immediata";
+"Longer glide" = "Scorrimento più lungo";

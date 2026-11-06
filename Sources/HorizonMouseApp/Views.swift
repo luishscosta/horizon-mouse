@@ -288,6 +288,11 @@ struct ScrollSettingsView: View {
             SettingsSection(title: L("Main wheel"), detail: L("Vertical movement")) {
                 SliderRow(title: L("Vertical speed"), value: model.verticalSpeed, range: 10...100,
                           label: "\(Int(model.verticalSpeed.wrappedValue))%", low: L("More precise"), high: L("Faster"))
+                SliderRow(title: L("Acceleration"), value: model.scrollAcceleration, range: 0...100,
+                          label: model.scrollAcceleration.wrappedValue == 0 ? L("Off") : "\(Int(model.scrollAcceleration.wrappedValue))%",
+                          low: L("Off"), high: L("Fast spins go farther"))
+                SliderRow(title: L("Smoothness"), value: model.scrollSmoothness, range: 0...100,
+                          label: "\(Int(model.scrollSmoothness.wrappedValue))%", low: L("Immediate"), high: L("Longer glide"))
                 Toggle(isOn: model.natural) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(L("Natural scrolling")).fontWeight(.medium)

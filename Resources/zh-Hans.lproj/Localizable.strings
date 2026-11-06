@@ -125,3 +125,9 @@
 "While the key is held, the side wheel scrolls content sideways at this speed, without switching desktops." = "按住该键时，侧滚轮以此速度横向滚动内容，不切换桌面。";
 "Without it, desktop switching, scrolling and mouse buttons stay off." = "没有它，桌面切换、滚动和鼠标按钮将保持关闭。";
 "Without the icon, open Horizon Mouse again from the Applications folder to see this window." = "没有图标时，请从“应用程序”文件夹再次打开 Horizon Mouse 以显示此窗口。";
+"Acceleration" = "加速";
+"Off" = "关闭";
+"Fast spins go farther" = "快速滚动走得更远";
+"Smoothness" = "平滑度";
+"Immediate" = "即时";
+"Longer glide" = "更长滑行";

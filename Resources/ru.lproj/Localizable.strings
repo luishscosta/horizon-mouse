@@ -125,3 +125,9 @@
 "While the key is held, the side wheel scrolls content sideways at this speed, without switching desktops." = "Пока клавиша удерживается, боковое колесо прокручивает содержимое вбок с этой скоростью, не переключая рабочие столы.";
 "Without it, desktop switching, scrolling and mouse buttons stay off." = "Без этого переключение столов, прокрутка и кнопки мыши остаются выключенными.";
 "Without the icon, open Horizon Mouse again from the Applications folder to see this window." = "Без значка снова откройте Horizon Mouse из папки «Программы», чтобы увидеть это окно.";
+"Acceleration" = "Ускорение";
+"Off" = "Выкл.";
+"Fast spins go farther" = "Быстрое вращение прокручивает дальше";
+"Smoothness" = "Плавность";
+"Immediate" = "Мгновенно";
+"Longer glide" = "Долгое скольжение";
