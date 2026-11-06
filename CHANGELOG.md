@@ -4,9 +4,12 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.1.6] - 2026-11-06
+
 ### Changed
 - Project language is now English; Portuguese and Spanish are translations.
 - Permission prompt text follows the system language.
+- Releases attach `SHA256SUMS.txt`.
 
 ## [0.1.5] - 2026-11-06
 
@@ -32,5 +35,6 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 ## [0.1.0]
 - First release: button gestures, desktop switching, smooth scrolling.
 
-[Unreleased]: https://github.com/luishscosta/mac-mouse-desk/compare/v0.1.5...HEAD
+[Unreleased]: https://github.com/luishscosta/mac-mouse-desk/compare/v0.1.6...HEAD
+[0.1.6]: https://github.com/luishscosta/mac-mouse-desk/releases/tag/v0.1.6
 [0.1.5]: https://github.com/luishscosta/mac-mouse-desk/releases/tag/v0.1.5
