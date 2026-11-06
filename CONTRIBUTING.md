@@ -1,15 +1,15 @@
 # Contributing
 
-Thanks for your interest in Mac Mouse Desk. Issues and pull requests are welcome.
+Thanks for your interest in Horizon Mouse. Issues and pull requests are welcome.
 
 ## Reporting a problem
 
 Open an issue with:
 
-- your macOS and Mac Mouse Desk versions (shown in the app's Settings footer);
+- your macOS and Horizon Mouse versions (shown in the app's Settings footer);
 - your mouse model and how it is connected (Bluetooth, receiver, cable);
 - what you expected, what happened, and steps to reproduce;
-- the output of `"/Applications/Mac Mouse Desk.app/Contents/MacOS/Mesa" --diagnose` and, for button problems, the log from `log stream --predicate 'subsystem == "local.macos-config.Mesa"'`.
+- the output of `"/Applications/Horizon Mouse.app/Contents/MacOS/HorizonMouse" --diagnose` and, for button problems, the log from `log stream --predicate 'subsystem == "io.github.luishscosta.horizonmouse"'`.
 
 First check that no other mouse remapper is running: they compete for the same events.
 
@@ -23,7 +23,7 @@ First check that no other mouse remapper is running: they compete for the same e
    bash scripts/build.sh
    ```
 
-   Without a certificate the build is signed ad-hoc, and macOS asks for Accessibility again after every build. To avoid that on your Mac, create a self-signed code-signing certificate in Keychain Access and pass its name in `MMD_SIGN_IDENTITY`. Published releases are signed with the maintainer's "Mac Mouse Desk Self-Signed" certificate.
+   Without a certificate the build is signed ad-hoc, and macOS asks for Accessibility again after every build. To avoid that on your Mac, create a self-signed code-signing certificate in Keychain Access and pass its name in `HORIZON_SIGN_IDENTITY`. Published releases are signed with the maintainer's "Mac Mouse Desk Self-Signed" certificate.
 
    `scripts/test.sh` must pass: it runs the behavior checks, validates the plists, and requires Portuguese and Spanish translations for every new UI string.
 3. UI strings are written in English as `L("English text")`. Add the same key to `Resources/pt-BR.lproj/Localizable.strings` and `Resources/es.lproj/Localizable.strings`.

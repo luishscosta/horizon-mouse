@@ -4,6 +4,12 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-06
+
+### Changed
+- Renamed to **Horizon Mouse** (previously Mac Mouse Desk). New bundle identifier `io.github.luishscosta.horizonmouse`: Accessibility must be granted once more. Settings are migrated automatically.
+- Homebrew: `brew install luishscosta/tap/horizon-mouse` (the old cask name migrates).
+
 ## [0.1.7] - 2026-11-06
 
 ### Added
@@ -41,7 +47,8 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 ## [0.1.0]
 - First release: button gestures, desktop switching, smooth scrolling.
 
-[Unreleased]: https://github.com/luishscosta/mac-mouse-desk/compare/v0.1.7...HEAD
-[0.1.7]: https://github.com/luishscosta/mac-mouse-desk/releases/tag/v0.1.7
-[0.1.6]: https://github.com/luishscosta/mac-mouse-desk/releases/tag/v0.1.6
-[0.1.5]: https://github.com/luishscosta/mac-mouse-desk/releases/tag/v0.1.5
+[Unreleased]: https://github.com/luishscosta/horizon-mouse/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/luishscosta/horizon-mouse/releases/tag/v0.2.0
+[0.1.7]: https://github.com/luishscosta/horizon-mouse/releases/tag/v0.1.7
+[0.1.6]: https://github.com/luishscosta/horizon-mouse/releases/tag/v0.1.6
+[0.1.5]: https://github.com/luishscosta/horizon-mouse/releases/tag/v0.1.5

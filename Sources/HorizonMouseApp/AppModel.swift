@@ -18,7 +18,7 @@ enum AppTab: String, CaseIterable, Identifiable {
         switch self {
         case .buttons: (L("Buttons and gestures"), L("Pick the button, set the gestures and try them."))
         case .scroll: (L("Scrolling"), L("Main wheel pace and switching desktops with the side wheel."))
-        case .settings: (L("Settings"), L("How Mac Mouse Desk runs on your Mac and in which language."))
+        case .settings: (L("Settings"), L("How Horizon Mouse runs on your Mac and in which language."))
         }
     }
 }
@@ -78,7 +78,7 @@ final class AppModel: ObservableObject {
 
     func startIdentify() {
         guard mouse.isEnabled else {
-            identifyMessage = L("Turn Mac Mouse Desk on to identify buttons.")
+            identifyMessage = L("Turn Horizon Mouse on to identify buttons.")
             return
         }
         mouse.isIdentifying.toggle()
@@ -86,7 +86,7 @@ final class AppModel: ObservableObject {
         if mouse.isIdentifying && !CGPreflightListenEventAccess() {
             // Buttons that send a keyboard shortcut (e.g. a middle button) are only visible with Input Monitoring.
             CGRequestListenEventAccess()
-            identifyMessage = L("Press a mouse button… For a button that sends a keyboard shortcut, turn on Mac Mouse Desk under Input Monitoring.")
+            identifyMessage = L("Press a mouse button… For a button that sends a keyboard shortcut, turn on Horizon Mouse under Input Monitoring.")
         }
         objectWillChange.send()
     }
@@ -153,7 +153,7 @@ final class AppModel: ObservableObject {
     var horizontalSpeed: Binding<Double> {
         Binding(get: { self.mouse.horizontalSpeed * 100 }, set: { self.mouse.horizontalSpeed = $0.rounded() / 100 })
     }
-    /// Asks macOS to list Mac Mouse Desk under Accessibility (system prompt) and opens the pane.
+    /// Asks macOS to list Horizon Mouse under Accessibility (system prompt) and opens the pane.
     func authorize() {
         mouse.requestPermissions()
         openPermission("Privacy_Accessibility")
@@ -215,7 +215,7 @@ final class AppModel: ObservableObject {
     func openPermission(_ anchor: String) {
         let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?\(anchor)")!
         if !NSWorkspace.shared.open(url) {
-            alert = (L("Open System Settings"), L("Go to Privacy & Security to authorize Mac Mouse Desk."))
+            alert = (L("Open System Settings"), L("Go to Privacy & Security to authorize Horizon Mouse."))
         }
     }
 

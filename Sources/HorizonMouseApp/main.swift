@@ -2,7 +2,7 @@ import AppKit
 import MouseKit
 import SwiftUI
 
-private let showNotification = Notification.Name("local.macos-config.Mesa.show")
+private let showNotification = Notification.Name("io.github.luishscosta.horizonmouse.show")
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMenuDelegate {
@@ -54,26 +54,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
 
     private func buildMenus() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
-        statusItem.button?.image = NSImage(systemSymbolName: "computermouse", accessibilityDescription: "Mac Mouse Desk")
-        statusItem.button?.toolTip = "Mac Mouse Desk"
+        statusItem.button?.image = NSImage(systemSymbolName: "computermouse", accessibilityDescription: "Horizon Mouse")
+        statusItem.button?.toolTip = "Horizon Mouse"
         let menu = NSMenu()
         menu.autoenablesItems = false
         menu.delegate = self
-        let version = NSMenuItem(title: "Mac Mouse Desk " + L("Version %@", appVersion), action: nil, keyEquivalent: "")
+        let version = NSMenuItem(title: "Horizon Mouse " + L("Version %@", appVersion), action: nil, keyEquivalent: "")
         version.isEnabled = false
         menu.addItem(version)
         menu.addItem(.separator())
-        menu.addItem(item(L("Open Mac Mouse Desk Settings…"), #selector(showSettings), key: ","))
+        menu.addItem(item(L("Open Horizon Mouse Settings…"), #selector(showSettings), key: ","))
         pauseMenu = item(L("Enable mouse"), #selector(toggleMouse))
         menu.addItem(pauseMenu)
         menu.addItem(.separator())
-        menu.addItem(item(L("Quit Mac Mouse Desk"), #selector(quit), key: "q"))
+        menu.addItem(item(L("Quit Horizon Mouse"), #selector(quit), key: "q"))
         statusItem.menu = menu
 
         // Standard editing menu keeps copy/paste/select-all available in the text fields.
         let mainMenu = NSMenu()
         let appMenu = NSMenu()
-        appMenu.addItem(item(L("Quit Mac Mouse Desk"), #selector(quit), key: "q"))
+        appMenu.addItem(item(L("Quit Horizon Mouse"), #selector(quit), key: "q"))
         let appItem = NSMenuItem()
         appItem.submenu = appMenu
         mainMenu.addItem(appItem)
@@ -90,7 +90,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     private func buildWindow() {
         window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 960, height: 700),
                           styleMask: [.titled, .closable, .miniaturizable, .resizable], backing: .buffered, defer: false)
-        window.title = "Mac Mouse Desk"
+        window.title = "Horizon Mouse"
         window.isReleasedWhenClosed = false
         window.delegate = self
         window.contentView = NSHostingView(rootView: RootView(model: model))
@@ -116,10 +116,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     }
 }
 
+/// Carries settings over from the pre-0.2 bundle id, when the app was called Mac Mouse Desk.
+private func migrateOldPreferences() {
+    let flag = "Horizon.migratedFromMesa"
+    let defaults = UserDefaults.standard
+    guard !defaults.bool(forKey: flag) else { return }
+    defaults.set(true, forKey: flag)
+    guard let old = defaults.persistentDomain(forName: "local.macos-config.Mesa") else { return }
+    for (key, value) in old where key.hasPrefix("Mesa.") && defaults.object(forKey: key) == nil { defaults.set(value, forKey: key) }
+}
+migrateOldPreferences()
+
 let app = NSApplication.shared
 if CommandLine.arguments.contains("--diagnose") {
     MainActor.assumeIsolated {
-        print("Mac Mouse Desk — read-only diagnostics")
+        print("Horizon Mouse — read-only diagnostics")
         print("macOS: \(ProcessInfo.processInfo.operatingSystemVersionString)")
         let mouse = MouseController()
         mouse.start()

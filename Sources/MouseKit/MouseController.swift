@@ -3,7 +3,7 @@ import ApplicationServices
 import MouseBridge
 import os
 
-private let log = Logger(subsystem: "local.macos-config.Mesa", category: "mouse")
+private let log = Logger(subsystem: "io.github.luishscosta.horizonmouse", category: "mouse")
 
 @MainActor
 public final class MouseController {

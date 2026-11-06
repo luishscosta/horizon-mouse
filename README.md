@@ -1,15 +1,15 @@
-# Mac Mouse Desk
+# Horizon Mouse
 
-[![CI](https://github.com/luishscosta/mac-mouse-desk/actions/workflows/ci.yml/badge.svg)](https://github.com/luishscosta/mac-mouse-desk/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/luishscosta/mac-mouse-desk)](https://github.com/luishscosta/mac-mouse-desk/releases/latest)
-[![License: MIT](https://img.shields.io/github/license/luishscosta/mac-mouse-desk)](LICENSE)
+[![CI](https://github.com/luishscosta/horizon-mouse/actions/workflows/ci.yml/badge.svg)](https://github.com/luishscosta/horizon-mouse/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/luishscosta/horizon-mouse)](https://github.com/luishscosta/horizon-mouse/releases/latest)
+[![License: MIT](https://img.shields.io/github/license/luishscosta/horizon-mouse)](LICENSE)
 ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-blue)
 ![Universal](https://img.shields.io/badge/arch-Apple%20Silicon%20%7C%20Intel-lightgrey)
 [![Homebrew](https://img.shields.io/badge/brew-luishscosta%2Ftap-orange)](https://github.com/luishscosta/homebrew-tap)
 
 A small macOS menu bar app that gives any wheel mouse button gestures and smooth desktop (Space) switching.
 
-![Mac Mouse Desk demo](docs/media/demo.gif)
+![Horizon Mouse demo](docs/media/demo.gif)
 
 - **Button gestures**: click, double click, hold and drag on each extra button, each with its own action.
 - **Desktop switching**: switch Spaces with a side wheel or by dragging a button, animated like a trackpad swipe.
@@ -26,15 +26,15 @@ With [Homebrew](https://brew.sh):
 
 ```sh
 brew trust luishscosta/tap
-brew install luishscosta/tap/mac-mouse-desk
+brew install luishscosta/tap/horizon-mouse
 ```
 
-Or download `MacMouseDesk.dmg` (or `.zip`) from the [latest release](https://github.com/luishscosta/mac-mouse-desk/releases/latest) and drag the app to **Applications**.
+Or download `HorizonMouse.dmg` (or `.zip`) from the [latest release](https://github.com/luishscosta/horizon-mouse/releases/latest) and drag the app to **Applications**.
 
 The app is self-signed and **not notarized**, so macOS blocks the first launch. Either remove the quarantine flag:
 
 ```sh
-xattr -dr com.apple.quarantine "/Applications/Mac Mouse Desk.app"
+xattr -dr com.apple.quarantine "/Applications/Horizon Mouse.app"
 ```
 
 or open **System Settings → Privacy & Security** and click **Open Anyway**.
@@ -95,7 +95,7 @@ Needs only the Command Line Tools:
 
 ```sh
 bash scripts/test.sh    # behavior checks, plist validation, translation coverage
-bash scripts/build.sh   # produces dist/MacMouseDesk.zip and .dmg
+bash scripts/build.sh   # produces dist/HorizonMouse.zip and .dmg
 ```
 
 Install the result in `/Applications` before granting permissions, and avoid building inside a synced folder (it can add metadata that breaks the signature). Without a signing certificate the build falls back to ad-hoc signing and macOS asks for Accessibility again after every build; see [CONTRIBUTING.md](CONTRIBUTING.md).
@@ -103,13 +103,13 @@ Install the result in `/Applications` before granting permissions, and avoid bui
 Diagnostics without capturing input or sending gestures:
 
 ```sh
-"/Applications/Mac Mouse Desk.app/Contents/MacOS/Mesa" --diagnose
-log stream --predicate 'subsystem == "local.macos-config.Mesa"'
+"/Applications/Horizon Mouse.app/Contents/MacOS/HorizonMouse" --diagnose
+log stream --predicate 'subsystem == "io.github.luishscosta.horizonmouse"'
 ```
 
 ## Project layout
 
-- `Sources/MesaApp`: SwiftUI interface, menu bar, login item.
+- `Sources/HorizonMouseApp`: SwiftUI interface, menu bar, login item.
 - `Sources/MouseKit`: event filtering, button gestures, smoothing, Space switching.
 - `Sources/MouseBridge`: C bridge to the private Dock gesture and HID APIs.
 - `Resources/*.lproj`: translations (English strings are the keys).
@@ -131,7 +131,7 @@ Using a different mouse? Please report how it works in an issue, with the `--dia
 
 ## Uninstall
 
-Turn off **Open at login**, quit the app, delete it from `/Applications`, and remove its entries in Accessibility and Input Monitoring. To clear preferences: `defaults delete local.macos-config.Mesa`. No driver or kernel extension is installed.
+Turn off **Open at login**, quit the app, delete it from `/Applications`, and remove its entries in Accessibility and Input Monitoring. To clear preferences: `defaults delete io.github.luishscosta.horizonmouse`. No driver or kernel extension is installed.
 
 ## Contributing
 

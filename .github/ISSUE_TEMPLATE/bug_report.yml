@@ -6,8 +6,8 @@ body:
     id: versions
     attributes:
       label: Versions
-      description: macOS and Mac Mouse Desk (shown in Settings)
-      placeholder: macOS 27.0.1, Mac Mouse Desk 0.1.5
+      description: macOS and Horizon Mouse (shown in Settings)
+      placeholder: macOS 27.0.1, Horizon Mouse 0.1.5
     validations: {required: true}
   - type: input
     id: mouse
@@ -25,7 +25,7 @@ body:
     id: diagnose
     attributes:
       label: Diagnostics
-      description: Output of `"/Applications/Mac Mouse Desk.app/Contents/MacOS/Mesa" --diagnose`, plus `log stream --predicate 'subsystem == "local.macos-config.Mesa"'` for button problems.
+      description: Output of `"/Applications/Horizon Mouse.app/Contents/MacOS/HorizonMouse" --diagnose`, plus `log stream --predicate 'subsystem == "io.github.luishscosta.horizonmouse"'` for button problems.
       render: shell
   - type: checkboxes
     id: others

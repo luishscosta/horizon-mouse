@@ -4,4 +4,4 @@ This project follows the [Contributor Covenant, version 2.1](https://www.contrib
 
 In short: be respectful, assume good faith, and keep discussion focused on the work. Harassment or discrimination of any kind is not tolerated.
 
-To report a problem, contact the maintainer through a private [GitHub security advisory](https://github.com/luishscosta/mac-mouse-desk/security/advisories/new) or the email on their GitHub profile.
+To report a problem, contact the maintainer through a private [GitHub security advisory](https://github.com/luishscosta/horizon-mouse/security/advisories/new) or the email on their GitHub profile.

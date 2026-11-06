@@ -56,7 +56,7 @@ struct RootView: View {
         HStack(spacing: 12) {
             Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
             VStack(alignment: .leading, spacing: 2) {
-                Text(L("Mac Mouse Desk doesn't have Accessibility yet")).fontWeight(.semibold)
+                Text(L("Horizon Mouse doesn't have Accessibility yet")).fontWeight(.semibold)
                 Text(L("Without it, desktop switching, scrolling and mouse buttons stay off. Each newly installed version must be authorized again."))
                     .font(.caption).foregroundStyle(.secondary)
             }
@@ -214,8 +214,8 @@ struct LivePanel: View {
             Label(L("LIVE TEST"), systemImage: "dot.radiowaves.left.and.right")
                 .font(.caption.weight(.semibold)).foregroundStyle(.secondary)
             Text(model.mouse.isEnabled
-                 ? L("Use the mouse: every button, gesture and roll Mac Mouse Desk recognizes shows here, with the action it ran. Pressing a button also selects it in the drawing.")
-                 : L("Turn Mac Mouse Desk on to test gestures."))
+                 ? L("Use the mouse: every button, gesture and roll Horizon Mouse recognizes shows here, with the action it ran. Pressing a button also selects it in the drawing.")
+                 : L("Turn Horizon Mouse on to test gestures."))
                 .font(.callout).foregroundStyle(.secondary)
             VStack(alignment: .leading, spacing: 6) {
                 if model.mouse.recentEvents.isEmpty {
@@ -324,7 +324,7 @@ struct ScrollSettingsView: View {
                 .padding(12)
                 .background(RoundedRectangle(cornerRadius: 9).fill(Color.primary.opacity(0.04)))
             }
-            Text(L("If your mouse maker's app allows it, keep the side wheel as horizontal scrolling, with no shortcuts. Mac Mouse Desk doesn't depend on that app."))
+            Text(L("If your mouse maker's app allows it, keep the side wheel as horizontal scrolling, with no shortcuts. Horizon Mouse doesn't depend on that app."))
                 .font(.caption).foregroundStyle(.secondary)
         }
         .frame(maxWidth: 680)
@@ -378,15 +378,15 @@ struct AppSettingsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 26) {
             SettingsSection(title: L("Running"), detail: L("Menu bar and background")) {
-                toggle(model.runInBackground, L("Run in the background"), L("When you close the window, Mac Mouse Desk keeps applying the mouse settings."))
-                toggle(model.showInDock, L("Show in Dock"), L("Shows Mac Mouse Desk in the Dock and Command-Tab while it's open."))
+                toggle(model.runInBackground, L("Run in the background"), L("When you close the window, Horizon Mouse keeps applying the mouse settings."))
+                toggle(model.showInDock, L("Show in Dock"), L("Shows Horizon Mouse in the Dock and Command-Tab while it's open."))
                 toggle(model.showMenuBarIcon, L("Show icon in the menu bar"), L("Quick access to open settings, pause the mouse and quit."))
-                toggle(model.openAtLogin, L("Open at login"), L("Starts Mac Mouse Desk in the background when you log in to your Mac."))
+                toggle(model.openAtLogin, L("Open at login"), L("Starts Horizon Mouse in the background when you log in to your Mac."))
                 if model.loginNeedsApproval {
-                    note(L("Allow Mac Mouse Desk in System Settings → General → Login Items."))
+                    note(L("Allow Horizon Mouse in System Settings → General → Login Items."))
                 }
                 if model.runInBackground.wrappedValue && !model.showMenuBarIcon.wrappedValue {
-                    note(L("Without the icon, open Mac Mouse Desk again from the Applications folder to see this window."))
+                    note(L("Without the icon, open Horizon Mouse again from the Applications folder to see this window."))
                 }
             }
             SettingsSection(title: L("Language"), detail: L("App interface")) {
@@ -394,11 +394,11 @@ struct AppSettingsView: View {
                     Text(L("System default (%@)", model.systemLanguageName)).tag("system")
                     ForEach(AppModel.languages, id: \.code) { Text($0.name).tag($0.code) }
                 }
-                Text(L("By default, Mac Mouse Desk uses the language set in System Settings › General › Language & Region."))
+                Text(L("By default, Horizon Mouse uses the language set in System Settings › General › Language & Region."))
                     .font(.caption).foregroundStyle(.secondary)
                 if model.languageChanged {
                     HStack {
-                        note(L("The new language applies after reopening Mac Mouse Desk."))
+                        note(L("The new language applies after reopening Horizon Mouse."))
                         Button(L("Reopen now")) { model.relaunch() }
                     }
                 }
@@ -408,10 +408,10 @@ struct AppSettingsView: View {
                     Button(L("Open Accessibility")) { model.openPermission("Privacy_Accessibility") }
                     Button(L("Input Monitoring (optional)")) { model.openPermission("Privacy_ListenEvent") }
                 }
-                Text(L("Mouse capture needs Accessibility. When you quit, Mac Mouse Desk releases the mouse."))
+                Text(L("Mouse capture needs Accessibility. When you quit, Horizon Mouse releases the mouse."))
                     .font(.caption).foregroundStyle(.secondary)
             }
-            Text("Mac Mouse Desk " + L("Version %@", appVersion)).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
+            Text("Horizon Mouse " + L("Version %@", appVersion)).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
         }
         .frame(maxWidth: 680)
     }
