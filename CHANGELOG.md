@@ -4,6 +4,11 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-06
+
+### Added
+- Translations: French, German, Italian, Japanese, Korean, Simplified Chinese, Russian and Turkish (community review welcome).
+
 ## [0.2.1] - 2026-11-06
 
 ### Fixed

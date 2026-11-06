@@ -14,7 +14,7 @@ A small macOS menu bar app that gives any wheel mouse button gestures and smooth
 - **Button gestures**: click, double click, hold and drag on each extra button, each with its own action.
 - **Desktop switching**: switch Spaces with a side wheel or by dragging a button, animated like a trackpad swipe.
 - **Smooth scrolling**: separate vertical and horizontal speeds, plus natural scrolling for the mouse only.
-- **Private**: no account, no server, no telemetry, no dependencies. Localized in English, Portuguese and Spanish.
+- **Private**: no account, no server, no telemetry, no dependencies. Available in 11 languages: English, Português, Español, Français, Deutsch, Italiano, 日本語, 한국어, 简体中文, Русский and Türkçe.
 
 It works with any mouse, regardless of brand, and never touches the trackpad, the left and right buttons, or other apps' synthetic events.
 

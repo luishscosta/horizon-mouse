@@ -188,7 +188,10 @@ final class AppModel: ObservableObject {
     }
     var loginNeedsApproval: Bool { SMAppService.mainApp.status == .requiresApproval }
 
-    static let languages: [(code: String, name: String)] = [("pt-BR", "Português (Brasil)"), ("en", "English"), ("es", "Español")]
+    static let languages: [(code: String, name: String)] = [
+        ("en", "English"), ("pt-BR", "Português (Brasil)"), ("es", "Español"), ("fr", "Français"), ("de", "Deutsch"), ("it", "Italiano"),
+        ("ja", "日本語"), ("ko", "한국어"), ("zh-Hans", "简体中文"), ("ru", "Русский"), ("tr", "Türkçe")
+    ]
     /// The language macOS would pick for this app with no override.
     var systemLanguageName: String {
         let preferred = Bundle.preferredLocalizations(from: Self.languages.map(\.code), forPreferences: Locale.preferredLanguages).first ?? "en"

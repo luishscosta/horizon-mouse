@@ -12,8 +12,8 @@ swiftc -D MESA_MOUSE_SELF_CHECK -parse-as-library \
 plutil -lint Resources/Info.plist Resources/*.lproj/*.strings
 # Every L("…") key must be translated; keys are the English source text.
 missing=$(perl -ne 'while (/\bL\("((?:[^"\\]|\\.)*)"/g) { print "$1\n" }' Sources/*/*.swift | sort -u | while IFS= read -r key; do
-    for lang in pt-BR es; do grep -qF "\"$key\" =" "Resources/$lang.lproj/Localizable.strings" || echo "$lang: $key"; done
+    for lang in $(cd Resources && ls -d *.lproj | sed "s/.lproj//"); do grep -qF "\"$key\" =" "Resources/$lang.lproj/Localizable.strings" || echo "$lang: $key"; done
 done)
 if [ -n "$missing" ]; then printf 'Missing translations:\n%s\n' "$missing"; exit 1; fi
-echo "Translations: pt-BR and es cover every key"
+echo "Translations: every language covers every key"
 git diff --check
