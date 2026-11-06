@@ -4,7 +4,7 @@
 [![Release](https://img.shields.io/github/v/release/luishscosta/mac-mouse-desk)](https://github.com/luishscosta/mac-mouse-desk/releases/latest)
 [![License: MIT](https://img.shields.io/github/license/luishscosta/mac-mouse-desk)](LICENSE)
 ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-blue)
-![Apple Silicon](https://img.shields.io/badge/Apple%20Silicon-arm64-lightgrey)
+![Universal](https://img.shields.io/badge/arch-Apple%20Silicon%20%7C%20Intel-lightgrey)
 [![Homebrew](https://img.shields.io/badge/brew-luishscosta%2Ftap-orange)](https://github.com/luishscosta/homebrew-tap)
 
 A small macOS menu bar app that gives any wheel mouse button gestures and smooth desktop (Space) switching.
@@ -20,7 +20,7 @@ It works with any mouse, regardless of brand, and never touches the trackpad, th
 
 ## Install
 
-Requires an Apple Silicon Mac on macOS 14 or later.
+Requires macOS 14 or later, on Apple Silicon or Intel (universal binary).
 
 With [Homebrew](https://brew.sh):
 
@@ -117,7 +117,17 @@ log stream --predicate 'subsystem == "local.macos-config.Mesa"'
 
 ## Limitations
 
-The app relies on private macOS APIs, so system updates can break it. It was developed and tested on Apple Silicon with macOS 27; earlier versions are not validated on hardware.
+The app relies on private macOS APIs, so system updates can break it.
+
+### Tested hardware
+
+| Mouse | Connection | Mac | macOS | Status |
+| --- | --- | --- | --- | --- |
+| Rapoo MT760 L | Bluetooth | Apple Silicon (M5) | 27.0.1 | Tested |
+| Other wheel mice | any | Apple Silicon | 14 and later | Not tested on hardware |
+| Any mouse | any | Intel | 14 to 26 | Builds as a universal binary; not tested on hardware |
+
+Using a different mouse? Please report how it works in an issue, with the `--diagnose` output.
 
 ## Uninstall
 
