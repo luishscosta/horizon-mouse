@@ -9,10 +9,10 @@ public enum MouseGesture: String, Codable, CaseIterable, Sendable {
     case click, doubleClick, hold, drag
     public var title: String {
         switch self {
-        case .click: L("Clique")
-        case .doubleClick: L("Duplo clique")
-        case .hold: L("Segurar")
-        case .drag: L("Arrastar")
+        case .click: L("Click")
+        case .doubleClick: L("Double click")
+        case .hold: L("Hold")
+        case .drag: L("Drag")
         }
     }
 }
@@ -21,14 +21,14 @@ public enum MouseAction: String, Codable, CaseIterable, Sendable {
     case standard, back, forward, shortcut, missionControl, showDesktop, switchSpaces, none
     public var title: String {
         switch self {
-        case .standard: L("Padrão do mouse")
-        case .back: L("Voltar")
-        case .forward: L("Avançar")
-        case .shortcut: L("Atalho…")
+        case .standard: L("Mouse default")
+        case .back: L("Back")
+        case .forward: L("Forward")
+        case .shortcut: L("Shortcut…")
         case .missionControl: "Mission Control"
-        case .showDesktop: L("Mostrar Mesa")
-        case .switchSpaces: L("Trocar Mesas")
-        case .none: L("Nenhuma ação")
+        case .showDesktop: L("Show Desktop")
+        case .switchSpaces: L("Switch Desktops")
+        case .none: L("No action")
         }
     }
 }
@@ -63,13 +63,13 @@ public enum MouseButtonSlot: String, Codable, CaseIterable, Sendable {
     case top, middle, front, back
     public var title: String {
         switch self {
-        case .top: L("Botão acima da roda")
-        case .middle: L("Botão do meio")
-        case .front: L("Lateral da frente")
-        case .back: L("Lateral de trás")
+        case .top: L("Button above the wheel")
+        case .middle: L("Middle button")
+        case .front: L("Front side button")
+        case .back: L("Back side button")
         }
     }
-    /// The top button has no fixed number: it is learned with "Identificar botão".
+    /// The top button has no fixed number: it is learned with "Identify button".
     public var fixedButtonNumber: Int? {
         switch self {
         case .middle: 2
@@ -91,7 +91,7 @@ public enum KeyButton {
 public struct MappingProfile: Codable, Equatable, Sendable {
     public var buttons: [String: ButtonMapping]
     public var topButtonNumber: Int?
-    /// Button numbers learned with "Identificar botão" for slots whose usual number the mouse does not send.
+    /// Button numbers learned with "Identify button" for slots whose usual number the mouse does not send.
     public var learned: [String: Int]?
 
     public init(buttons: [String: ButtonMapping] = [:], topButtonNumber: Int? = nil) {
@@ -263,7 +263,7 @@ public enum HorizontalScrollKey: String, CaseIterable, Sendable {
     case none, option, shift, control, command
     public var title: String {
         switch self {
-        case .none: L("Nenhuma")
+        case .none: L("None")
         case .option: "⌥ Option"
         case .shift: "⇧ Shift"
         case .control: "⌃ Control"

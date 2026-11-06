@@ -42,9 +42,9 @@ struct RootView: View {
             .labelsHidden()
             .frame(width: 340)
             Spacer()
-            Toggle(L("Ativo"), isOn: model.mouseEnabled)
+            Toggle(L("Active"), isOn: model.mouseEnabled)
                 .toggleStyle(.switch)
-            Text(L("Perfil global"))
+            Text(L("Global profile"))
                 .font(.caption)
                 .padding(.horizontal, 8).padding(.vertical, 4)
                 .overlay(RoundedRectangle(cornerRadius: 6).stroke(.quaternary))
@@ -56,12 +56,12 @@ struct RootView: View {
         HStack(spacing: 12) {
             Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(.orange)
             VStack(alignment: .leading, spacing: 2) {
-                Text(L("O Mac Mouse Desk ainda não tem Acessibilidade")).fontWeight(.semibold)
-                Text(L("Sem ela, a troca de mesas, a rolagem e os botões do mouse ficam desligados. Cada nova versão instalada precisa ser autorizada de novo."))
+                Text(L("Mac Mouse Desk doesn't have Accessibility yet")).fontWeight(.semibold)
+                Text(L("Without it, desktop switching, scrolling and mouse buttons stay off. Each newly installed version must be authorized again."))
                     .font(.caption).foregroundStyle(.secondary)
             }
             Spacer()
-            Button(L("Autorizar…")) { model.authorize() }.buttonStyle(.borderedProminent)
+            Button(L("Authorize…")) { model.authorize() }.buttonStyle(.borderedProminent)
         }
         .padding(.horizontal, 24).padding(.vertical, 12)
         .background(Color.orange.opacity(0.12))
@@ -73,7 +73,7 @@ struct RootView: View {
             Text(model.mouse.status).font(.caption).foregroundStyle(.secondary).lineLimit(2)
             Spacer()
             if model.tab == .buttons {
-                Button(L("Restaurar gestos padrão")) { model.resetMappings() }
+                Button(L("Restore default gestures")) { model.resetMappings() }
                     .buttonStyle(.link).font(.caption)
             }
         }
@@ -90,7 +90,7 @@ struct ButtonsView: View {
         HStack(alignment: .top, spacing: 24) {
             VStack(alignment: .leading, spacing: 14) {
                 HStack {
-                    Picker(L("Botão"), selection: $model.selectedSlot) {
+                    Picker(L("Button"), selection: $model.selectedSlot) {
                         ForEach(MouseButtonSlot.allCases, id: \.self) { Text($0.title).tag($0) }
                     }
                     .frame(maxWidth: 280)
@@ -105,16 +105,16 @@ struct ButtonsView: View {
                     Button {
                         model.startIdentify()
                     } label: {
-                        Label(model.mouse.isIdentifying ? L("Aguardando botão…") : L("Identificar botão"), systemImage: "record.circle")
+                        Label(model.mouse.isIdentifying ? L("Waiting for button…") : L("Identify button"), systemImage: "record.circle")
                     }
-                    Text(model.identifyMessage.isEmpty ? L("Pressione um botão do mouse para selecioná-lo. Se ele não for reconhecido, fica ligado ao controle escolhido no desenho.") : model.identifyMessage)
+                    Text(model.identifyMessage.isEmpty ? L("Press a mouse button to select it. If it is not recognized, it is linked to the control selected in the drawing.") : model.identifyMessage)
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 GestureEditor(model: model, gesture: model.selectedGesture)
-                Text(L("Clique simples pode aguardar o duplo clique quando ambos estão configurados. Esquerdo e direito seguem o padrão."))
+                Text(L("A single click may wait for a double click when both are set. Left and right buttons keep the default."))
                     .font(.caption).foregroundStyle(.secondary)
                 if model.selectedSlot == .top && model.profile.topButtonNumber == nil {
-                    Text(L("Use Identificar botão e pressione o botão acima da roda. Se nada acontecer, o mouse trata esse botão no próprio firmware (ex.: DPI) e o macOS não o recebe."))
+                    Text(L("Use Identify button and press the button above the wheel. If nothing happens, the mouse handles it in firmware (e.g. DPI) and macOS never receives it."))
                         .font(.caption).foregroundStyle(.orange)
                 }
             }
@@ -195,8 +195,8 @@ struct GestureEditor: View {
             }
             .labelsHidden()
             if model.mapping.action(gesture) == .shortcut {
-                Button(model.recordingGesture == gesture ? L("Pressione o atalho… (Esc cancela)") :
-                        (model.mapping.shortcut(gesture)?.display ?? L("Gravar atalho"))) {
+                Button(model.recordingGesture == gesture ? L("Press the shortcut… (Esc cancels)") :
+                        (model.mapping.shortcut(gesture)?.display ?? L("Record shortcut"))) {
                     model.recordShortcut(gesture)
                 }
             }
@@ -211,15 +211,15 @@ struct LivePanel: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Label(L("TESTE AO VIVO"), systemImage: "dot.radiowaves.left.and.right")
+            Label(L("LIVE TEST"), systemImage: "dot.radiowaves.left.and.right")
                 .font(.caption.weight(.semibold)).foregroundStyle(.secondary)
             Text(model.mouse.isEnabled
-                 ? L("Use o mouse: cada botão, gesto e giro que o Mac Mouse Desk reconhece aparece aqui, com a ação executada. Apertar um botão também o seleciona no desenho.")
-                 : L("Ligue o Mac Mouse Desk para testar os gestos."))
+                 ? L("Use the mouse: every button, gesture and roll Mac Mouse Desk recognizes shows here, with the action it ran. Pressing a button also selects it in the drawing.")
+                 : L("Turn Mac Mouse Desk on to test gestures."))
                 .font(.callout).foregroundStyle(.secondary)
             VStack(alignment: .leading, spacing: 6) {
                 if model.mouse.recentEvents.isEmpty {
-                    Text(L("Nenhum evento ainda")).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .center)
+                    Text(L("No events yet")).foregroundStyle(.secondary).frame(maxWidth: .infinity, alignment: .center)
                 } else {
                     ForEach(Array(model.mouse.recentEvents.enumerated()), id: \.offset) { index, event in
                         Text(event)
@@ -234,9 +234,9 @@ struct LivePanel: View {
             .background(RoundedRectangle(cornerRadius: 8).strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [5, 4])).foregroundStyle(.quaternary))
             Divider()
             HStack {
-                Text(model.mouse.fullSwitchPerRoll ? L("Rodinha lateral · uma mesa por giro") : L("Rodinha lateral · %ld passos por mesa", Int(model.mouse.stepsPerSpace))).font(.caption)
+                Text(model.mouse.fullSwitchPerRoll ? L("Side wheel · one desktop per roll") : L("Side wheel · %ld steps per desktop", Int(model.mouse.stepsPerSpace))).font(.caption)
                 Spacer()
-                Button(L("Ajustar em Rolagem →")) { model.tab = .scroll }.buttonStyle(.link).font(.caption)
+                Button(L("Adjust in Scrolling →")) { model.tab = .scroll }.buttonStyle(.link).font(.caption)
             }
         }
         .padding(16)
@@ -285,46 +285,46 @@ struct ScrollSettingsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 26) {
-            SettingsSection(title: L("Roda principal"), detail: L("Movimento vertical")) {
-                SliderRow(title: L("Velocidade vertical"), value: model.verticalSpeed, range: 10...100,
-                          label: "\(Int(model.verticalSpeed.wrappedValue))%", low: L("Mais precisa"), high: L("Mais rápida"))
+            SettingsSection(title: L("Main wheel"), detail: L("Vertical movement")) {
+                SliderRow(title: L("Vertical speed"), value: model.verticalSpeed, range: 10...100,
+                          label: "\(Int(model.verticalSpeed.wrappedValue))%", low: L("More precise"), high: L("Faster"))
                 Toggle(isOn: model.natural) {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(L("Rolagem natural")).fontWeight(.medium)
-                        Text(L("O conteúdo acompanha o movimento dos dedos, como no trackpad. Vale só para o mouse."))
+                        Text(L("Natural scrolling")).fontWeight(.medium)
+                        Text(L("Content follows your finger movement, like on the trackpad. Applies only to the mouse."))
                             .font(.caption).foregroundStyle(.secondary)
                     }
                 }
             }
-            SettingsSection(title: L("Rodinha lateral"), detail: L("Trocar Mesas")) {
+            SettingsSection(title: L("Side wheel"), detail: L("Switch Desktops")) {
                 Toggle(isOn: model.fullSwitch) {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(L("Uma mesa por giro")).fontWeight(.medium)
-                        Text(L("Cada giro da rodinha completa a troca de mesa, como deslizar no trackpad. Pause um instante para trocar de novo."))
+                        Text(L("One desktop per roll")).fontWeight(.medium)
+                        Text(L("Each roll of the wheel completes the desktop switch, like a trackpad swipe. Pause briefly to switch again."))
                             .font(.caption).foregroundStyle(.secondary)
                     }
                 }
                 if !model.fullSwitch.wrappedValue {
-                    SliderRow(title: L("Passos por mesa"), value: model.steps, range: 2...500,
-                              label: L("%ld passos", Int(model.steps.wrappedValue)), low: L("2 passos"), high: L("500 passos"))
-                    Text(L("Quantos passos da rodinha lateral levam à mesa seguinte. Um valor maior revela a próxima mesa mais devagar."))
+                    SliderRow(title: L("Steps per desktop"), value: model.steps, range: 2...500,
+                              label: L("%ld steps", Int(model.steps.wrappedValue)), low: L("2 steps"), high: L("500 steps"))
+                    Text(L("How many side-wheel steps reach the next desktop. A higher value reveals the next desktop more slowly."))
                         .font(.caption).foregroundStyle(.secondary)
                 }
-                Toggle(L("Inverter direção"), isOn: model.inverted)
+                Toggle(L("Reverse direction"), isOn: model.inverted)
                 // Key and speed sit together: the key switches the wheel to sideways scrolling at this speed.
                 VStack(alignment: .leading, spacing: 10) {
-                    Picker(L("Segurar para rolar na horizontal"), selection: model.horizontalKey) {
+                    Picker(L("Hold to scroll horizontally"), selection: model.horizontalKey) {
                         ForEach(HorizontalScrollKey.allCases, id: \.self) { Text($0.title).tag($0) }
                     }
-                    SliderRow(title: L("Velocidade horizontal"), value: model.horizontalSpeed, range: 10...100,
-                              label: "\(Int(model.horizontalSpeed.wrappedValue))%", low: L("Mais precisa"), high: L("Mais rápida"))
-                    Text(L("Com a tecla pressionada, a rodinha lateral rola o conteúdo para os lados nesta velocidade, sem trocar de mesa."))
+                    SliderRow(title: L("Horizontal speed"), value: model.horizontalSpeed, range: 10...100,
+                              label: "\(Int(model.horizontalSpeed.wrappedValue))%", low: L("More precise"), high: L("Faster"))
+                    Text(L("While the key is held, the side wheel scrolls content sideways at this speed, without switching desktops."))
                         .font(.caption).foregroundStyle(.secondary)
                 }
                 .padding(12)
                 .background(RoundedRectangle(cornerRadius: 9).fill(Color.primary.opacity(0.04)))
             }
-            Text(L("Se o app do fabricante do mouse permitir, deixe a rodinha lateral como rolagem horizontal, sem atalhos. O Mac Mouse Desk não depende desse app."))
+            Text(L("If your mouse maker's app allows it, keep the side wheel as horizontal scrolling, with no shortcuts. Mac Mouse Desk doesn't depend on that app."))
                 .font(.caption).foregroundStyle(.secondary)
         }
         .frame(maxWidth: 680)
@@ -377,41 +377,41 @@ struct AppSettingsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 26) {
-            SettingsSection(title: L("Execução"), detail: L("Barra de menus e segundo plano")) {
-                toggle(model.runInBackground, L("Rodar em segundo plano"), L("Ao fechar a janela, o Mac Mouse Desk continua aplicando os ajustes do mouse."))
-                toggle(model.showInDock, L("Mostrar no Dock"), L("Mostra o Mac Mouse Desk no Dock e no Command-Tab enquanto ele estiver aberto."))
-                toggle(model.showMenuBarIcon, L("Mostrar ícone na barra de menus"), L("Acesso rápido para abrir os ajustes, pausar o mouse e sair."))
-                toggle(model.openAtLogin, L("Abrir ao iniciar sessão"), L("Inicia o Mac Mouse Desk em segundo plano quando você entra no Mac."))
+            SettingsSection(title: L("Running"), detail: L("Menu bar and background")) {
+                toggle(model.runInBackground, L("Run in the background"), L("When you close the window, Mac Mouse Desk keeps applying the mouse settings."))
+                toggle(model.showInDock, L("Show in Dock"), L("Shows Mac Mouse Desk in the Dock and Command-Tab while it's open."))
+                toggle(model.showMenuBarIcon, L("Show icon in the menu bar"), L("Quick access to open settings, pause the mouse and quit."))
+                toggle(model.openAtLogin, L("Open at login"), L("Starts Mac Mouse Desk in the background when you log in to your Mac."))
                 if model.loginNeedsApproval {
-                    note(L("Autorize o Mac Mouse Desk em Ajustes do Sistema → Geral → Itens de Início de Sessão."))
+                    note(L("Allow Mac Mouse Desk in System Settings → General → Login Items."))
                 }
                 if model.runInBackground.wrappedValue && !model.showMenuBarIcon.wrappedValue {
-                    note(L("Sem o ícone, abra o Mac Mouse Desk de novo pela pasta Aplicativos para ver esta janela."))
+                    note(L("Without the icon, open Mac Mouse Desk again from the Applications folder to see this window."))
                 }
             }
-            SettingsSection(title: L("Idioma"), detail: L("Interface do app")) {
-                Picker(L("Idioma do app"), selection: model.language) {
-                    Text(L("Padrão do sistema (%@)", model.systemLanguageName)).tag("system")
+            SettingsSection(title: L("Language"), detail: L("App interface")) {
+                Picker(L("App language"), selection: model.language) {
+                    Text(L("System default (%@)", model.systemLanguageName)).tag("system")
                     ForEach(AppModel.languages, id: \.code) { Text($0.name).tag($0.code) }
                 }
-                Text(L("Por padrão, o Mac Mouse Desk usa o idioma definido em Ajustes do Sistema › Geral › Idioma e Região."))
+                Text(L("By default, Mac Mouse Desk uses the language set in System Settings › General › Language & Region."))
                     .font(.caption).foregroundStyle(.secondary)
                 if model.languageChanged {
                     HStack {
-                        note(L("O novo idioma vale depois de reabrir o Mac Mouse Desk."))
-                        Button(L("Reabrir agora")) { model.relaunch() }
+                        note(L("The new language applies after reopening Mac Mouse Desk."))
+                        Button(L("Reopen now")) { model.relaunch() }
                     }
                 }
             }
-            SettingsSection(title: L("Permissões"), detail: L("Privacidade e Segurança")) {
+            SettingsSection(title: L("Permissions"), detail: L("Privacy & Security")) {
                 HStack {
-                    Button(L("Abrir Acessibilidade")) { model.openPermission("Privacy_Accessibility") }
-                    Button(L("Monitoração de Entrada (opcional)")) { model.openPermission("Privacy_ListenEvent") }
+                    Button(L("Open Accessibility")) { model.openPermission("Privacy_Accessibility") }
+                    Button(L("Input Monitoring (optional)")) { model.openPermission("Privacy_ListenEvent") }
                 }
-                Text(L("A captura do mouse precisa de Acessibilidade. Ao sair, o Mac Mouse Desk libera o mouse."))
+                Text(L("Mouse capture needs Accessibility. When you quit, Mac Mouse Desk releases the mouse."))
                     .font(.caption).foregroundStyle(.secondary)
             }
-            Text("Mac Mouse Desk " + L("Versão %@", appVersion)).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
+            Text("Mac Mouse Desk " + L("Version %@", appVersion)).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
         }
         .frame(maxWidth: 680)
     }

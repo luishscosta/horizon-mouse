@@ -254,11 +254,11 @@ struct MousePermissionState {
     // A modifying defaultTap uses Accessibility; listen-only monitoring is separate.
     var canAttemptCapture: Bool { accessibility }
     var pausedStatus: String {
-        accessibility ? L("Pausado — Acessibilidade autorizada; ligue o Mac Mouse Desk") :
-            L("Acessibilidade não reconhecida neste processo. Confira Mac Mouse Desk em Acessibilidade / Controle do Dispositivo e Acesso a Dados e reabra o app.")
+        accessibility ? L("Paused — Accessibility granted; turn Mac Mouse Desk on") :
+            L("Accessibility not recognized for this process. Check Mac Mouse Desk in Accessibility and reopen the app.")
     }
     var tapFailureStatus: String {
-        accessibility ? L("Acessibilidade autorizada, mas a captura não abriu. Feche e reabra Mac Mouse Desk; confira a autorização deste app em Acessibilidade / Controle do Dispositivo e Acesso a Dados.") : pausedStatus
+        accessibility ? L("Accessibility granted, but capture didn't start. Quit and reopen Mac Mouse Desk; check this app's entry in Accessibility.") : pausedStatus
     }
 }
 

@@ -9,11 +9,11 @@ swiftc -D MESA_MOUSE_SELF_CHECK -parse-as-library \
     Sources/MouseKit/SwipeState.swift Sources/MouseKit/ButtonGestures.swift Tests/MouseKitTests/MouseKitTests.swift \
     -o .build/checks/mouse
 .build/checks/mouse
-plutil -lint Resources/Info.plist Resources/*.lproj/Localizable.strings
-# Every L("…") key must be translated; pt-BR keys are the source text.
+plutil -lint Resources/Info.plist Resources/*.lproj/*.strings
+# Every L("…") key must be translated; keys are the English source text.
 missing=$(perl -ne 'while (/\bL\("((?:[^"\\]|\\.)*)"/g) { print "$1\n" }' Sources/*/*.swift | sort -u | while IFS= read -r key; do
-    for lang in en es; do grep -qF "\"$key\" =" "Resources/$lang.lproj/Localizable.strings" || echo "$lang: $key"; done
+    for lang in pt-BR es; do grep -qF "\"$key\" =" "Resources/$lang.lproj/Localizable.strings" || echo "$lang: $key"; done
 done)
 if [ -n "$missing" ]; then printf 'Missing translations:\n%s\n' "$missing"; exit 1; fi
-echo "Translations: en and es cover every key"
+echo "Translations: pt-BR and es cover every key"
 git diff --check

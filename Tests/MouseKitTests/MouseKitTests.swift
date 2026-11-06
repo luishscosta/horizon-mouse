@@ -306,9 +306,8 @@ final class MouseKitTests: XCTestCase {
         permission.accessibility = false
         permission.inputMonitoring = true
         XCTAssertFalse(permission.canAttemptCapture)
-        XCTAssertTrue(permission.pausedStatus.contains("Acessibilidade"))
-        XCTAssertTrue(permission.pausedStatus.contains("Controle do Dispositivo e Acesso a Dados"))
-        XCTAssertFalse(permission.pausedStatus.contains("Monitoramento de Entrada"))
+        XCTAssertTrue(permission.pausedStatus.contains("Accessibility"))
+        XCTAssertFalse(permission.pausedStatus.contains("Input Monitoring"))
     }
 
     func testPausedPermissionStatusUpdatesWithoutActivatingCapture() {
@@ -317,10 +316,10 @@ final class MouseKitTests: XCTestCase {
         XCTAssertEqual(capture.updatePermissions(permission), permission.pausedStatus)
         XCTAssertFalse(capture.isEnabled)
         permission.accessibility = true
-        XCTAssertTrue(capture.updatePermissions(permission)!.contains("autorizada"))
+        XCTAssertTrue(capture.updatePermissions(permission)!.contains("granted"))
         XCTAssertFalse(capture.isEnabled)
         XCTAssertNil(capture.updatePermissions(permission))
-        XCTAssertTrue(permission.tapFailureStatus.contains("captura"))
+        XCTAssertTrue(permission.tapFailureStatus.contains("capture"))
         permission.accessibility = false
         XCTAssertEqual(capture.updatePermissions(permission), permission.pausedStatus)
         XCTAssertFalse(capture.isEnabled)

@@ -1,37 +1,37 @@
-# Contribuindo
+# Contributing
 
-Obrigado pelo interesse no Mac Mouse Desk. Issues e pull requests são bem-vindos em português, inglês ou espanhol.
+Thanks for your interest in Mac Mouse Desk. Issues and pull requests are welcome.
 
-## Reportar um problema
+## Reporting a problem
 
-Abra uma issue com:
+Open an issue with:
 
-- versão do macOS e do Mac Mouse Desk (Ajustes → sobre, ou `CFBundleShortVersionString`);
-- modelo do mouse e como está conectado (Bluetooth, receptor, cabo);
-- o que esperava e o que aconteceu, com passos para reproduzir;
-- a saída de `~/Applications/"Mac Mouse Desk.app"/Contents/MacOS/Mesa --diagnose` e, se for sobre botões, o log de `log stream --predicate 'subsystem == "local.macos-config.Mesa"'`.
+- your macOS and Mac Mouse Desk versions (shown in the app's Settings footer);
+- your mouse model and how it is connected (Bluetooth, receiver, cable);
+- what you expected, what happened, and steps to reproduce;
+- the output of `"/Applications/Mac Mouse Desk.app/Contents/MacOS/Mesa" --diagnose` and, for button problems, the log from `log stream --predicate 'subsystem == "local.macos-config.Mesa"'`.
 
-Confira antes se outro remapeador de mouse está ativo: eles disputam os mesmos eventos.
+First check that no other mouse remapper is running: they compete for the same events.
 
-## Enviar uma mudança
+## Submitting a change
 
-1. Faça um fork e crie um branch a partir de `main` (`feat/…`, `fix/…`, `docs/…`).
-2. Compile e teste com Command Line Tools:
+1. Fork the repo and branch from `main` (`feat/…`, `fix/…`, `docs/…`).
+2. Build and test with the Command Line Tools:
 
    ```sh
    bash scripts/test.sh
    bash scripts/build.sh
    ```
 
-   Sem certificado, o build usa assinatura ad-hoc e o macOS pede a autorização de Acessibilidade a cada build. Para evitar isso no seu Mac, crie em Acesso às Chaves um certificado de assinatura de código autoassinado e passe o nome dele em `MMD_SIGN_IDENTITY`. As versões publicadas são assinadas com o certificado "Mac Mouse Desk Self-Signed" do mantenedor.
+   Without a certificate the build is signed ad-hoc, and macOS asks for Accessibility again after every build. To avoid that on your Mac, create a self-signed code-signing certificate in Keychain Access and pass its name in `MMD_SIGN_IDENTITY`. Published releases are signed with the maintainer's "Mac Mouse Desk Self-Signed" certificate.
 
-   `scripts/test.sh` precisa passar: ele roda as verificações de comportamento, valida os plists e exige tradução em inglês e espanhol para todo texto novo.
-3. Textos da interface usam `L("texto em português")`. Adicione a mesma chave em `Resources/en.lproj/Localizable.strings` e `Resources/es.lproj/Localizable.strings`.
-4. Teste no hardware o que mudou (troca de mesas, gestos, trackpad intacto) e descreva o teste no pull request.
-5. Use mensagens de commit no formato [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`…).
+   `scripts/test.sh` must pass: it runs the behavior checks, validates the plists, and requires Portuguese and Spanish translations for every new UI string.
+3. UI strings are written in English as `L("English text")`. Add the same key to `Resources/pt-BR.lproj/Localizable.strings` and `Resources/es.lproj/Localizable.strings`.
+4. Test your change on hardware (desktop switching, gestures, trackpad untouched) and describe the test in the pull request.
+5. Use [Conventional Commits](https://www.conventionalcommits.org/) for commit messages (`feat:`, `fix:`, `docs:`…).
 
-Mantenha as mudanças pequenas e focadas. O app não deve ganhar telemetria, conta, servidor nem dependências externas.
+Keep changes small and focused. The app must not gain telemetry, accounts, servers or external dependencies.
 
-## Licença
+## License
 
-Ao contribuir, você concorda que sua contribuição seja licenciada sob a [licença MIT](LICENSE) do projeto.
+By contributing, you agree that your contribution is licensed under the project's [MIT license](LICENSE).

@@ -49,7 +49,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
-        pauseMenu.title = model.mouse.isEnabled ? L("Pausar mouse") : L("Ativar mouse")
+        pauseMenu.title = model.mouse.isEnabled ? L("Pause mouse") : L("Enable mouse")
     }
 
     private func buildMenus() {
@@ -59,27 +59,27 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         let menu = NSMenu()
         menu.autoenablesItems = false
         menu.delegate = self
-        let version = NSMenuItem(title: "Mac Mouse Desk " + L("Versão %@", appVersion), action: nil, keyEquivalent: "")
+        let version = NSMenuItem(title: "Mac Mouse Desk " + L("Version %@", appVersion), action: nil, keyEquivalent: "")
         version.isEnabled = false
         menu.addItem(version)
         menu.addItem(.separator())
-        menu.addItem(item(L("Abrir ajustes do Mac Mouse Desk…"), #selector(showSettings), key: ","))
-        pauseMenu = item(L("Ativar mouse"), #selector(toggleMouse))
+        menu.addItem(item(L("Open Mac Mouse Desk Settings…"), #selector(showSettings), key: ","))
+        pauseMenu = item(L("Enable mouse"), #selector(toggleMouse))
         menu.addItem(pauseMenu)
         menu.addItem(.separator())
-        menu.addItem(item(L("Sair do Mac Mouse Desk"), #selector(quit), key: "q"))
+        menu.addItem(item(L("Quit Mac Mouse Desk"), #selector(quit), key: "q"))
         statusItem.menu = menu
 
         // Standard editing menu keeps copy/paste/select-all available in the text fields.
         let mainMenu = NSMenu()
         let appMenu = NSMenu()
-        appMenu.addItem(item(L("Sair do Mac Mouse Desk"), #selector(quit), key: "q"))
+        appMenu.addItem(item(L("Quit Mac Mouse Desk"), #selector(quit), key: "q"))
         let appItem = NSMenuItem()
         appItem.submenu = appMenu
         mainMenu.addItem(appItem)
-        let editItem = NSMenuItem(title: L("Editar"), action: nil, keyEquivalent: "")
-        let editMenu = NSMenu(title: L("Editar"))
-        for (title, action, key) in [(L("Recortar"), "cut:", "x"), (L("Copiar"), "copy:", "c"), (L("Colar"), "paste:", "v"), (L("Selecionar Tudo"), "selectAll:", "a")] {
+        let editItem = NSMenuItem(title: L("Edit"), action: nil, keyEquivalent: "")
+        let editMenu = NSMenu(title: L("Edit"))
+        for (title, action, key) in [(L("Cut"), "cut:", "x"), (L("Copy"), "copy:", "c"), (L("Paste"), "paste:", "v"), (L("Select All"), "selectAll:", "a")] {
             editMenu.addItem(NSMenuItem(title: title, action: Selector(action), keyEquivalent: key))
         }
         editItem.submenu = editMenu
@@ -119,14 +119,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
 let app = NSApplication.shared
 if CommandLine.arguments.contains("--diagnose") {
     MainActor.assumeIsolated {
-        print("Mac Mouse Desk — diagnóstico somente leitura")
+        print("Mac Mouse Desk — read-only diagnostics")
         print("macOS: \(ProcessInfo.processInfo.operatingSystemVersionString)")
         let mouse = MouseController()
         mouse.start()
         print(mouse.diagnostics)
-        print("Perfil de botões: \(String(data: (try? JSONEncoder().encode(mouse.profile)) ?? Data(), encoding: .utf8) ?? "")")
+        print("Button profile: \(String(data: (try? JSONEncoder().encode(mouse.profile)) ?? Data(), encoding: .utf8) ?? "")")
         mouse.stop()
-        print("Nenhum evento de mouse foi aplicado.")
+        print("No mouse events were applied.")
     }
 } else {
     MainActor.assumeIsolated {

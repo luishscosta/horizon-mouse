@@ -33,7 +33,7 @@
 	<key>NSHighResolutionCapable</key>
 	<true/>
 	<key>NSInputMonitoringUsageDescription</key>
-	<string>O Mac Mouse Desk lê a roda e os botões extras do mouse para trocar mesas e aplicar seus gestos, sem alterar o trackpad.</string>
+	<string>Mac Mouse Desk reads the wheel and extra buttons of your mouse to switch desktops and run your gestures, without touching the trackpad.</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>

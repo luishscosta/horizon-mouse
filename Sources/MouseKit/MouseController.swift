@@ -8,9 +8,9 @@ private let log = Logger(subsystem: "local.macos-config.Mesa", category: "mouse"
 @MainActor
 public final class MouseController {
     public var onChange: (() -> Void)?
-    public private(set) var status = L("Pausado")
+    public private(set) var status = L("Paused")
     public var isEnabled: Bool { capture.isEnabled }
-    public private(set) var diagnostics = "Mouse: aguardando observação."
+    public private(set) var diagnostics = "Mouse: waiting for first observation."
     public var stepsPerSpace: Double {
         get { SwipeState.clampSteps(UserDefaults.standard.object(forKey: "Mesa.mouse.stepsPerSpace") as? Double ?? 12) }
         set { UserDefaults.standard.set(SwipeState.clampSteps(newValue), forKey: "Mesa.mouse.stepsPerSpace"); onChange?() }
@@ -82,7 +82,7 @@ public final class MouseController {
         onChange?()
     }
 
-    private func buttonName(_ button: Int) -> String { profile.slot(forButton: button)?.title ?? L("Botão %ld", button + 1) }
+    private func buttonName(_ button: Int) -> String { profile.slot(forButton: button)?.title ?? L("Button %ld", button + 1) }
 
     private var tap: CFMachPort?
     private var tapSource: CFRunLoopSource?
@@ -153,13 +153,13 @@ public final class MouseController {
     public func setEnabled(_ enabled: Bool) {
         if !enabled {
             deactivate()
-            status = L("Pausado")
+            status = L("Paused")
             onChange?()
             return
         }
         start()
         guard !isEnabled else { return }
-        guard !sleeping else { status = L("Pausado durante repouso"); onChange?(); return }
+        guard !sleeping else { status = L("Paused during sleep"); onChange?(); return }
         let permission = currentPermissions
         guard permission.canAttemptCapture else {
             status = capture.updatePermissions(permission) ?? permission.pausedStatus
@@ -168,7 +168,7 @@ public final class MouseController {
         }
         _ = capture.updatePermissions(permission)
         guard MBDockSwipeAvailable(), MBPrepareDockSwipe() else {
-            status = L("API de gestos indisponível; rolagem preservada")
+            status = L("Gesture API unavailable; scrolling preserved")
             onChange?()
             return
         }
@@ -218,7 +218,7 @@ public final class MouseController {
         observers.forEach { NSWorkspace.shared.notificationCenter.removeObserver($0) }
         observers = []
         started = false
-        status = L("Pausado")
+        status = L("Paused")
         onChange?()
     }
 
@@ -250,7 +250,7 @@ public final class MouseController {
             setEnabled(true)
             return
         }
-        let details = "Processo \(ProcessInfo.processInfo.processIdentifier): AX=\(permission.accessibility ? 1 : 0), ListenEvent (opcional)=\(permission.inputMonitoring ? 1 : 0), PostEvent=\(permission.eventPosting ? 1 : 0). Mouses HID: \(count); DockSwipe: \(MBDockSwipeAvailable() ? "sim" : "não")."
+        let details = "Process \(ProcessInfo.processInfo.processIdentifier): AX=\(permission.accessibility ? 1 : 0), ListenEvent (optional)=\(permission.inputMonitoring ? 1 : 0), PostEvent=\(permission.eventPosting ? 1 : 0). HID mice: \(count); DockSwipe: \(MBDockSwipeAvailable() ? "yes" : "no")."
         let oldStatus = status
         if isEnabled {
             if !permission.canAttemptCapture {
@@ -258,9 +258,9 @@ public final class MouseController {
                 status = permission.pausedStatus
             } else if !MBDockSwipeAvailable() {
                 deactivate()
-                status = L("API de gestos indisponível; rolagem preservada")
+                status = L("Gesture API unavailable; scrolling preserved")
             } else {
-                status = L("Ativo — mesas, botões e rolagem suave do mouse")
+                status = L("Active — desktops, buttons and smooth mouse scrolling")
             }
         }
         if let updated = capture.updatePermissions(permission) { status = updated }
@@ -279,7 +279,7 @@ public final class MouseController {
         let passthrough = Unmanaged.passUnretained(event)
         if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
             deactivate()
-            status = L("Captura interrompida pelo sistema; ative novamente")
+            status = L("Capture stopped by the system; turn it on again")
             onChange?()
             return passthrough
         }
@@ -298,7 +298,7 @@ public final class MouseController {
             return passthrough
         }
         // Fail open before suppressing an event if construction or association fails.
-        guard MBPrepareDockSwipe() else { deactivate(); status = L("Gestos indisponíveis; rolagem preservada"); onChange?(); return passthrough }
+        guard MBPrepareDockSwipe() else { deactivate(); status = L("Gestures unavailable; scrolling preserved"); onChange?(); return passthrough }
         var sender: UInt64 = 0
         var rawX = 0.0
         var rawY = 0.0
@@ -341,7 +341,7 @@ public final class MouseController {
             var metadata = VerticalScrollMetadata(event: event)
             // Apps must see a plain scroll: the key only selects the mode (Option-scroll means "faster" in some apps).
             metadata.flags.remove(key.flag)
-            note(L("Rodinha lateral + %@ → rolagem horizontal", key.title))
+            note(L("Side wheel + %@ → horizontal scrolling", key.title))
             if horizontalSender != 0 && horizontalSender != sender { capture.horizontal.cancel() }
             if capture.horizontal.isActive && horizontalMetadata?.isCompatible(with: metadata) == false { return passthrough }
             guard capture.horizontal.move(pixels: pixelsX != 0 ? pixelsX : steps * 10, speed: horizontalSpeed, at: now) else { return passthrough }
@@ -359,7 +359,7 @@ public final class MouseController {
         let wasActive = swipe.isActive
         if fullSwitchPerRoll { swipe.flick(direction * steps, at: now) }
         else { swipe.move(by: direction * steps / stepsPerSpace, at: now) }
-        if !wasActive && swipe.isActive { note(steps > 0 ? L("Rodinha lateral → trocar mesa (→)") : L("Rodinha lateral → trocar mesa (←)")) }
+        if !wasActive && swipe.isActive { note(steps > 0 ? L("Side wheel → switch desktop (→)") : L("Side wheel → switch desktop (←)")) }
         startFrames()
         return nil
     }
@@ -434,7 +434,7 @@ public final class MouseController {
         }
         let current = profile
         guard let slot = current.slot(forButton: button) else {
-            if isDown { note(L("%@ · padrão do mouse", buttonName(button))) }
+            if isDown { note(L("%@ · mouse default", buttonName(button))) }
             return passthrough
         }
         if isDown { onButtonPressed?(slot) }
@@ -442,7 +442,7 @@ public final class MouseController {
         if machines[button] == nil {
             // Buttons without remapped gestures stay fully native.
             guard isDown, !mapping.handled.isEmpty else {
-                if isDown { note(L("%@ · padrão do mouse", slot.title)) }
+                if isDown { note(L("%@ · mouse default", slot.title)) }
                 return passthrough
             }
             machines[button] = ButtonGestureMachine(handled: mapping.handled)
@@ -472,7 +472,7 @@ public final class MouseController {
                 note(L("%@ · %@ → %@", buttonName(button), gesture.title, mapping.action(gesture).title))
                 perform(mapping.action(gesture), gesture: gesture, mapping: mapping)
             case .replayDown:
-                note(L("%@ · padrão do mouse", buttonName(button)))
+                note(L("%@ · mouse default", buttonName(button)))
                 postButton(button, down: true, at: location)
             case .replayClick:
                 note(L("%@ · %@ → %@", buttonName(button), MouseGesture.click.title, MouseAction.standard.title))
@@ -625,7 +625,7 @@ public final class MouseController {
         for output in outputs {
             guard MBPostDockSwipe(output.phase.rawValue, output.progress, output.velocity) else {
                 deactivate()
-                status = L("Falha ao gerar gesto; captura pausada")
+                status = L("Failed to generate gesture; capture paused")
                 onChange?()
                 return
             }
@@ -635,7 +635,7 @@ public final class MouseController {
         if pixels != 0 {
             guard let event = verticalMetadata?.makeEvent(pixels: pixels) else {
                 deactivate()
-                status = L("Falha ao suavizar rolagem; captura pausada")
+                status = L("Failed to smooth scrolling; capture paused")
                 onChange?()
                 return
             }
@@ -645,7 +645,7 @@ public final class MouseController {
         if pixelsX != 0 {
             guard let event = horizontalMetadata?.makeEvent(pixels: 0, horizontal: pixelsX) else {
                 deactivate()
-                status = L("Falha ao suavizar rolagem; captura pausada")
+                status = L("Failed to smooth scrolling; capture paused")
                 onChange?()
                 return
             }

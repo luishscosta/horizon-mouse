@@ -9,16 +9,16 @@ enum AppTab: String, CaseIterable, Identifiable {
     var id: Self { self }
     var title: String {
         switch self {
-        case .buttons: L("Botões")
-        case .scroll: L("Rolagem")
-        case .settings: L("Ajustes")
+        case .buttons: L("Buttons")
+        case .scroll: L("Scrolling")
+        case .settings: L("Settings")
         }
     }
     var heading: (String, String) {
         switch self {
-        case .buttons: (L("Botões e gestos"), L("Escolha o botão, ajuste os gestos e experimente."))
-        case .scroll: (L("Rolagem"), L("O ritmo da roda principal e a troca de mesas pela rodinha lateral."))
-        case .settings: (L("Ajustes"), L("Como o Mac Mouse Desk roda no Mac e em qual idioma."))
+        case .buttons: (L("Buttons and gestures"), L("Pick the button, set the gestures and try them."))
+        case .scroll: (L("Scrolling"), L("Main wheel pace and switching desktops with the side wheel."))
+        case .settings: (L("Settings"), L("How Mac Mouse Desk runs on your Mac and in which language."))
         }
     }
 }
@@ -61,9 +61,9 @@ final class AppModel: ObservableObject {
 
     func buttonCode(_ slot: MouseButtonSlot) -> String {
         if let number = profile.buttonNumber(slot) {
-            return KeyButton.keyCode(number) != nil ? L("Atalho do mouse") : L("Botão %ld", number + 1)
+            return KeyButton.keyCode(number) != nil ? L("Mouse shortcut") : L("Button %ld", number + 1)
         }
-        return L("Não identificado")
+        return L("Not identified")
     }
 
     func action(for gesture: MouseGesture) -> Binding<MouseAction> {
@@ -78,15 +78,15 @@ final class AppModel: ObservableObject {
 
     func startIdentify() {
         guard mouse.isEnabled else {
-            identifyMessage = L("Ligue o Mac Mouse Desk para identificar botões.")
+            identifyMessage = L("Turn Mac Mouse Desk on to identify buttons.")
             return
         }
         mouse.isIdentifying.toggle()
-        identifyMessage = mouse.isIdentifying ? L("Pressione um botão do mouse…") : ""
+        identifyMessage = mouse.isIdentifying ? L("Press a mouse button…") : ""
         if mouse.isIdentifying && !CGPreflightListenEventAccess() {
             // Buttons that send a keyboard shortcut (e.g. a middle button) are only visible with Input Monitoring.
             CGRequestListenEventAccess()
-            identifyMessage = L("Pressione um botão do mouse… Para um botão que envia atalho de teclado, ative o Mac Mouse Desk em Monitoração de Entrada.")
+            identifyMessage = L("Press a mouse button… For a button that sends a keyboard shortcut, turn on Mac Mouse Desk under Input Monitoring.")
         }
         objectWillChange.send()
     }
@@ -101,8 +101,8 @@ final class AppModel: ObservableObject {
             mouse.profile = profile
         }
         identifyMessage = KeyButton.keyCode(button) != nil
-            ? L("%@ identificado (envia um atalho de teclado).", selectedSlot.title)
-            : L("%@ identificado (botão %ld).", selectedSlot.title, button + 1)
+            ? L("%@ identified (sends a keyboard shortcut).", selectedSlot.title)
+            : L("%@ identified (button %ld).", selectedSlot.title, button + 1)
     }
 
     func recordShortcut(_ gesture: MouseGesture) {
@@ -123,7 +123,7 @@ final class AppModel: ObservableObject {
             var profile = self.profile
             var mapping = profile.mapping(self.selectedSlot)
             mapping.set(KeyShortcut(keyCode: event.keyCode, modifiers: cgFlags.rawValue,
-                                    display: symbols + (key == " " ? L("Espaço") : key)), for: gesture)
+                                    display: symbols + (key == " " ? L("Space") : key)), for: gesture)
             profile.set(mapping, for: self.selectedSlot)
             self.mouse.profile = profile
             self.stopRecording()
@@ -215,9 +215,9 @@ final class AppModel: ObservableObject {
     func openPermission(_ anchor: String) {
         let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?\(anchor)")!
         if !NSWorkspace.shared.open(url) {
-            alert = (L("Abra os Ajustes do Sistema"), L("Acesse Privacidade e Segurança para autorizar o Mac Mouse Desk."))
+            alert = (L("Open System Settings"), L("Go to Privacy & Security to authorize Mac Mouse Desk."))
         }
     }
 
-    func show(_ error: Error) { alert = (L("Não foi possível concluir"), error.localizedDescription) }
+    func show(_ error: Error) { alert = (L("Couldn't complete"), error.localizedDescription) }
 }
