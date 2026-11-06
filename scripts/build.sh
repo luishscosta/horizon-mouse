@@ -31,6 +31,7 @@ ln -s /Applications "$dmg_root/Applications"
 rm -f "$PWD/dist/MacMouseDesk.dmg"
 hdiutil create -quiet -volname "Mac Mouse Desk" -srcfolder "$dmg_root" -fs HFS+ -format UDZO "$PWD/dist/MacMouseDesk.dmg"
 codesign --force --sign "$identity" "$PWD/dist/MacMouseDesk.dmg"
+(cd "$PWD/dist" && shasum -a 256 MacMouseDesk.zip MacMouseDesk.dmg > SHA256SUMS.txt)
 rm -rf "$build_root/Mac Mouse Desk.app"
 ditto --norsrc "$app" "$build_root/Mac Mouse Desk.app"
 codesign --verify --strict "$build_root/Mac Mouse Desk.app"

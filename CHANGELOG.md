@@ -1,0 +1,36 @@
+# Changelog
+
+All notable changes are documented here. Format based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/); versions follow [SemVer](https://semver.org/).
+
+## [Unreleased]
+
+### Changed
+- Project language is now English; Portuguese and Spanish are translations.
+- Permission prompt text follows the system language.
+
+## [0.1.5] - 2026-11-06
+
+### Added
+- Support for mouse buttons that send a keyboard shortcut (requires Input Monitoring).
+- **Identify button** can bind an unrecognized button to the selected control.
+
+### Changed
+- Rewrote the desktop-switch gesture and wheel smoothing code.
+
+## [0.1.4]
+- Purple app icon.
+
+## [0.1.3]
+- Releases signed with a stable certificate so the Accessibility grant survives updates; DMG added.
+
+## [0.1.2]
+- Version shown in the app and menu.
+
+## [0.1.1]
+- App icon; fixed the Hold gesture.
+
+## [0.1.0]
+- First release: button gestures, desktop switching, smooth scrolling.
+
+[Unreleased]: https://github.com/luishscosta/mac-mouse-desk/compare/v0.1.5...HEAD
+[0.1.5]: https://github.com/luishscosta/mac-mouse-desk/releases/tag/v0.1.5

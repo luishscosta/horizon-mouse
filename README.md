@@ -1,6 +1,15 @@
 # Mac Mouse Desk
 
+[![CI](https://github.com/luishscosta/mac-mouse-desk/actions/workflows/ci.yml/badge.svg)](https://github.com/luishscosta/mac-mouse-desk/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/luishscosta/mac-mouse-desk)](https://github.com/luishscosta/mac-mouse-desk/releases/latest)
+[![License: MIT](https://img.shields.io/github/license/luishscosta/mac-mouse-desk)](LICENSE)
+![macOS 14+](https://img.shields.io/badge/macOS-14%2B-blue)
+![Apple Silicon](https://img.shields.io/badge/Apple%20Silicon-arm64-lightgrey)
+[![Homebrew](https://img.shields.io/badge/brew-luishscosta%2Ftap-orange)](https://github.com/luishscosta/homebrew-tap)
+
 A small macOS menu bar app that gives any wheel mouse button gestures and smooth desktop (Space) switching.
+
+![Mac Mouse Desk demo](docs/media/demo.gif)
 
 - **Button gestures**: click, double click, hold and drag on each extra button, each with its own action.
 - **Desktop switching**: switch Spaces with a side wheel or by dragging a button, animated like a trackpad swipe.
@@ -40,6 +49,8 @@ or open **System Settings → Privacy & Security** and click **Open Anyway**.
 
 ### Buttons and gestures
 
+![Buttons tab](docs/media/buttons.png)
+
 On the **Buttons** tab, pick a control (front side, back side, middle, or the button above the wheel) and set an action for each gesture: **Click**, **Double click**, **Hold** (0.45 s) and **Drag**.
 
 Actions: mouse default, Back (⌘[), Forward (⌘]), a recorded shortcut, Mission Control, Show Desktop, Switch Desktops (Drag only), or nothing.
@@ -59,6 +70,24 @@ Actions: mouse default, Back (⌘[), Forward (⌘]), a recorded shortcut, Missio
 ### Settings
 
 **Run in the background** keeps the app active when the window closes, **Show icon in the menu bar** toggles the menu bar item, and **Open at login** uses macOS Login Items. The app language follows the system and can be overridden in **App language**.
+
+## Privacy and trust
+
+- **No network access, no telemetry, no accounts.** Nothing leaves your Mac.
+- **Accessibility** is used only to filter mouse wheel and button events. **Input Monitoring** is optional and only lets the app see mouse buttons that send keyboard shortcuts; keystrokes are never recorded or stored.
+- No driver or kernel extension. Quit the app and everything returns to normal.
+- Small, auditable Swift/C source (MIT) with automated tests and CI. Releases attach `SHA256SUMS.txt`; verify with `shasum -a 256 -c SHA256SUMS.txt`. See [SECURITY.md](SECURITY.md) to verify the signature or report a vulnerability.
+
+## How it works
+
+An event tap filters mouse events. Desktop switching sends the same private Dock gesture a trackpad swipe produces, driven by an exponential smoothing curve, so the animation follows the wheel. Because it uses private macOS APIs, system updates can break it (see [Limitations](#limitations)).
+
+## Troubleshooting
+
+- **"Cannot be opened because the developer cannot be verified":** the app is self-signed, not notarized. Remove the quarantine flag (see [Install](#install)).
+- **The app stops capturing the mouse:** re-check **Accessibility** in System Settings → Privacy & Security. Toggle it off and on, then reopen the app.
+- **A button is not detected:** use **Identify button**; if it still does nothing, the mouse firmware handles it. Buttons that send a keyboard shortcut need **Input Monitoring**.
+- **Conflicts:** quit other remappers and vendor apps that bind the same buttons.
 
 ## Build from source
 

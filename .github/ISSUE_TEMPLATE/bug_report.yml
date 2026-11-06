@@ -1,0 +1,35 @@
+name: Bug report
+description: Something does not work as expected
+labels: [bug]
+body:
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: macOS and Mac Mouse Desk (shown in Settings)
+      placeholder: macOS 27.0.1, Mac Mouse Desk 0.1.5
+    validations: {required: true}
+  - type: input
+    id: mouse
+    attributes:
+      label: Mouse model and connection
+      placeholder: "Model X, Bluetooth"
+    validations: {required: true}
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+      description: Steps to reproduce help a lot.
+    validations: {required: true}
+  - type: textarea
+    id: diagnose
+    attributes:
+      label: Diagnostics
+      description: Output of `"/Applications/Mac Mouse Desk.app/Contents/MacOS/Mesa" --diagnose`, plus `log stream --predicate 'subsystem == "local.macos-config.Mesa"'` for button problems.
+      render: shell
+  - type: checkboxes
+    id: others
+    attributes:
+      label: Checks
+      options:
+        - label: No other mouse remapper or vendor app is running
