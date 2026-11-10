@@ -3,9 +3,6 @@
 "%@ identified (sends a keyboard shortcut)." = "已识别 %@（发送键盘快捷键）。";
 "%@ · %@ → %@" = "%@ · %@ → %@";
 "%@ · mouse default" = "%@ · 鼠标默认";
-"%ld steps" = "%ld 步";
-"2 steps" = "2 步";
-"500 steps" = "500 步";
 "A single click may wait for a double click when both are set. Left and right buttons keep the default." = "同时设置了双击时，单击可能会等待双击。左键和右键保持默认。";
 "Accessibility granted, but capture didn't start. Quit and reopen Horizon Mouse; check this app's entry in Accessibility." = "已授予辅助功能，但捕获未启动。请退出并重新打开 Horizon Mouse，并检查本 App 在辅助功能中的条目。";
 "Accessibility not recognized for this process. Check Horizon Mouse in Accessibility and reopen the app." = "此进程未识别到辅助功能。请在辅助功能中检查 Horizon Mouse，然后重新打开 App。";
@@ -48,7 +45,6 @@
 "Hold to scroll horizontally" = "按住以横向滚动";
 "Horizontal speed" = "横向速度";
 "How Horizon Mouse runs on your Mac and in which language." = "Horizon Mouse 如何在你的 Mac 上运行以及使用哪种语言。";
-"How many side-wheel steps reach the next desktop. A higher value reveals the next desktop more slowly." = "侧滚轮需要多少步才能到达下一个桌面。数值越大，下一个桌面出现得越慢。";
 "Identify button" = "识别按钮";
 "If your mouse maker's app allows it, keep the side wheel as horizontal scrolling, with no shortcuts. Horizon Mouse doesn't depend on that app." = "如果鼠标厂商的 App 允许，请将侧滚轮保留为不带快捷键的横向滚动。Horizon Mouse 不依赖该 App。";
 "Input Monitoring (optional)" = "输入监控（可选）";
@@ -103,13 +99,11 @@
 "Shows Horizon Mouse in the Dock and Command-Tab while it's open." = "打开期间，在 Dock 和 Command-Tab 中显示 Horizon Mouse。";
 "Side wheel" = "侧滚轮";
 "Side wheel + %@ → horizontal scrolling" = "侧滚轮 + %@ → 横向滚动";
-"Side wheel · %ld steps per desktop" = "侧滚轮 · 每个桌面 %ld 步";
 "Side wheel · one desktop per roll" = "侧滚轮 · 每转一次一个桌面";
 "Side wheel → switch desktop (←)" = "侧滚轮 → 切换桌面（←）";
 "Side wheel → switch desktop (→)" = "侧滚轮 → 切换桌面（→）";
 "Space" = "空格";
 "Starts Horizon Mouse in the background when you log in to your Mac." = "登录 Mac 时在后台启动 Horizon Mouse。";
-"Steps per desktop" = "每个桌面的步数";
 "Switch Desktops" = "切换桌面";
 "System default (%@)" = "系统默认（%@）";
 "The new language applies after reopening Horizon Mouse." = "新语言将在重新打开 Horizon Mouse 后生效。";
@@ -136,3 +130,12 @@
 "Not set" = "未设置";
 "or choose" = "或选择";
 "Turn Horizon Mouse on to record system shortcuts such as ⌃→. Until then, pick them from the lists." = "开启 Horizon Mouse 后可录制 ⌃→ 等系统快捷键。在此之前，请从列表中选择。";
+"Glide" = "滑行";
+"Switch speed" = "切换速度";
+"Slower" = "更慢";
+"Horizontal scrolling" = "水平滚动";
+"Side wheel while holding a key" = "按住按键时的侧滚轮";
+"How far you roll to reach the next desktop. Faster needs less." = "滚动多少才能到达下一个桌面。越快所需越少。";
+"Side wheel · switch speed %ld%%" = "侧滚轮 · 切换速度 %ld%%";
+"How long scrolling keeps gliding after the wheel stops. Higher feels softer, lower stops with the wheel." = "滚轮停止后滚动继续滑行的时间。数值越高越柔和，越低则随滚轮立即停止。";
+"Try it: scroll here with the main wheel, or hold the key and roll the side wheel." = "试一试：在此用主滚轮滚动，或按住按键并滚动侧滚轮。";

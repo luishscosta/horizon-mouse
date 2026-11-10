@@ -289,7 +289,7 @@ struct LivePanel: View {
             .background(RoundedRectangle(cornerRadius: 8).strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [5, 4])).foregroundStyle(.quaternary))
             Divider()
             HStack {
-                Text(model.mouse.fullSwitchPerRoll ? L("Side wheel · one desktop per roll") : L("Side wheel · %ld steps per desktop", Int(model.mouse.stepsPerSpace))).font(.caption)
+                Text(model.mouse.fullSwitchPerRoll ? L("Side wheel · one desktop per roll") : L("Side wheel · switch speed %ld%%", Int((model.mouse.switchSpeed * 100).rounded()))).font(.caption)
                 Spacer()
                 Button(L("Adjust in Scrolling →")) { model.tab = .scroll }.buttonStyle(.link).font(.caption)
             }
@@ -339,57 +339,164 @@ struct ScrollSettingsView: View {
     @ObservedObject var model: AppModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 26) {
-            SettingsSection(title: L("Main wheel"), detail: L("Vertical movement")) {
-                SliderRow(title: L("Vertical speed"), value: model.verticalSpeed, range: 10...100,
-                          label: "\(Int(model.verticalSpeed.wrappedValue))%", low: L("More precise"), high: L("Faster"))
-                SliderRow(title: L("Acceleration"), value: model.scrollAcceleration, range: 0...100,
-                          label: model.scrollAcceleration.wrappedValue == 0 ? L("Off") : "\(Int(model.scrollAcceleration.wrappedValue))%",
-                          low: L("Off"), high: L("Fast spins go farther"))
-                Toggle(isOn: model.natural) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(L("Natural scrolling")).fontWeight(.medium)
-                        Text(L("Content follows your finger movement, like on the trackpad. Applies only to the mouse."))
-                            .font(.caption).foregroundStyle(.secondary)
-                    }
-                }
+        // Two rows of two cards: cards in a row always share the same height.
+        VStack(alignment: .leading, spacing: 18) {
+            HStack(alignment: .top, spacing: 18) {
+                mainWheel
+                smoothness
             }
-            SettingsSection(title: L("Smoothness"), detail: L("Vertical and horizontal scrolling")) {
-                SliderRow(title: L("Smoothness"), value: model.scrollSmoothness, range: 0...100,
-                          label: "\(Int(model.scrollSmoothness.wrappedValue))%", low: L("Immediate"), high: L("Longer glide"))
-            }
-            SettingsSection(title: L("Side wheel"), detail: L("Switch Desktops")) {
-                Toggle(isOn: model.fullSwitch) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(L("One desktop per roll")).fontWeight(.medium)
-                        Text(L("Each roll of the wheel completes the desktop switch, like a trackpad swipe. Pause briefly to switch again."))
-                            .font(.caption).foregroundStyle(.secondary)
-                    }
-                }
-                if !model.fullSwitch.wrappedValue {
-                    SliderRow(title: L("Steps per desktop"), value: model.steps, range: 2...500,
-                              label: L("%ld steps", Int(model.steps.wrappedValue)), low: L("2 steps"), high: L("500 steps"))
-                    Text(L("How many side-wheel steps reach the next desktop. A higher value reveals the next desktop more slowly."))
-                        .font(.caption).foregroundStyle(.secondary)
-                }
-                Toggle(L("Reverse direction"), isOn: model.inverted)
-                // Key and speed sit together: the key switches the wheel to sideways scrolling at this speed.
-                VStack(alignment: .leading, spacing: 10) {
-                    Picker(L("Hold to scroll horizontally"), selection: model.horizontalKey) {
-                        ForEach(HorizontalScrollKey.allCases, id: \.self) { Text($0.title).tag($0) }
-                    }
-                    SliderRow(title: L("Horizontal speed"), value: model.horizontalSpeed, range: 10...100,
-                              label: "\(Int(model.horizontalSpeed.wrappedValue))%", low: L("More precise"), high: L("Faster"))
-                    Text(L("While the key is held, the side wheel scrolls content sideways at this speed, without switching desktops."))
-                        .font(.caption).foregroundStyle(.secondary)
-                }
-                .padding(12)
-                .background(RoundedRectangle(cornerRadius: 9).fill(Color.primary.opacity(0.04)))
+            HStack(alignment: .top, spacing: 18) {
+                sideWheel
+                horizontal
             }
             Text(L("If your mouse maker's app allows it, keep the side wheel as horizontal scrolling, with no shortcuts. Horizon Mouse doesn't depend on that app."))
                 .font(.caption).foregroundStyle(.secondary)
         }
-        .frame(maxWidth: 680)
+    }
+
+    private var mainWheel: some View {
+        SettingsCard(icon: "computermouse", title: L("Main wheel"), detail: L("Vertical movement")) {
+            SliderRow(icon: "speedometer", title: L("Vertical speed"), value: model.verticalSpeed, range: 10...100,
+                      label: "\(Int(model.verticalSpeed.wrappedValue))%", low: L("More precise"), high: L("Faster"))
+            Divider()
+            SliderRow(icon: "bolt.fill", title: L("Acceleration"), value: model.scrollAcceleration, range: 0...100,
+                      label: model.scrollAcceleration.wrappedValue == 0 ? L("Off") : "\(Int(model.scrollAcceleration.wrappedValue))%",
+                      low: L("Off"), high: L("Fast spins go farther"))
+            Divider()
+            ToggleRow(icon: "arrow.up.arrow.down", title: L("Natural scrolling"),
+                      description: L("Content follows your finger movement, like on the trackpad. Applies only to the mouse."),
+                      isOn: model.natural)
+        }
+    }
+
+    private var sideWheel: some View {
+        SettingsCard(icon: "square.on.square", title: L("Side wheel"), detail: L("Switch Desktops")) {
+            ToggleRow(icon: "hand.point.up.left", title: L("One desktop per roll"),
+                      description: L("Each roll of the wheel completes the desktop switch, like a trackpad swipe. Pause briefly to switch again."),
+                      isOn: model.fullSwitch)
+            if !model.fullSwitch.wrappedValue {
+                Divider()
+                SliderRow(icon: "speedometer", title: L("Switch speed"), value: model.switchSpeed, range: 0...100,
+                          label: "\(Int(model.switchSpeed.wrappedValue))%", low: L("Slower"), high: L("Faster"),
+                          description: L("How far you roll to reach the next desktop. Faster needs less."))
+            }
+            Divider()
+            ToggleRow(icon: "arrow.left.arrow.right", title: L("Reverse direction"), description: nil, isOn: model.inverted)
+        }
+    }
+
+    private var smoothness: some View {
+        SettingsCard(icon: "wind", title: L("Smoothness"), detail: L("Vertical and horizontal scrolling")) {
+            SliderRow(icon: "waveform.path", title: L("Glide"), value: model.scrollSmoothness, range: 0...100,
+                      label: "\(Int(model.scrollSmoothness.wrappedValue))%", low: L("Immediate"), high: L("Longer glide"),
+                      description: L("How long scrolling keeps gliding after the wheel stops. Higher feels softer, lower stops with the wheel."))
+            Divider()
+            ScrollTryOut()
+        }
+    }
+
+    private var horizontal: some View {
+        SettingsCard(icon: "arrow.left.and.right", title: L("Horizontal scrolling"), detail: L("Side wheel while holding a key")) {
+            HStack(spacing: 12) {
+                RowIcon(name: "keyboard")
+                Text(L("Hold to scroll horizontally"))
+                Spacer()
+                Picker("", selection: model.horizontalKey) {
+                    ForEach(HorizontalScrollKey.allCases, id: \.self) { Text($0.title).tag($0) }
+                }
+                .labelsHidden()
+                .frame(width: 160)
+            }
+            Divider()
+            SliderRow(icon: "speedometer", title: L("Horizontal speed"), value: model.horizontalSpeed, range: 10...100,
+                      label: "\(Int(model.horizontalSpeed.wrappedValue))%", low: L("More precise"), high: L("Faster"),
+                      description: L("While the key is held, the side wheel scrolls content sideways at this speed, without switching desktops."))
+        }
+    }
+}
+
+/// One grid that scrolls both ways, to feel speed, acceleration and glide: main wheel for vertical, side wheel plus
+/// the chosen key for horizontal. It grows to fill its card.
+struct ScrollTryOut: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(L("Try it: scroll here with the main wheel, or hold the key and roll the side wheel."))
+                .font(.caption).foregroundStyle(.secondary)
+            ScrollView([.vertical, .horizontal]) {
+                VStack(spacing: 6) {
+                    ForEach(0..<40, id: \.self) { row in
+                        HStack(spacing: 6) {
+                            ForEach(0..<30, id: \.self) { column in
+                                RoundedRectangle(cornerRadius: 5)
+                                    .fill(Color.accentColor.opacity((row + column) % 2 == 0 ? 0.35 : 0.15))
+                                    .frame(width: 64, height: 24)
+                                    .overlay(Text("\(row + 1),\(column + 1)").font(.caption2).foregroundStyle(.secondary))
+                            }
+                        }
+                    }
+                }
+            }
+            .frame(minHeight: 90, idealHeight: 90, maxHeight: .infinity)
+            .background(RoundedRectangle(cornerRadius: 8).fill(Color.primary.opacity(0.04)))
+        }
+        .frame(maxHeight: .infinity, alignment: .top)
+    }
+}
+
+/// A rounded card with an icon badge in its header; rows go inside.
+struct SettingsCard<Content: View>: View {
+    let icon: String
+    let title: String
+    let detail: String
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 10) {
+                Image(systemName: icon)
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 28, height: 28)
+                    .background(RoundedRectangle(cornerRadius: 7).fill(Color.accentColor))
+                Text(title).font(.headline)
+                Spacer()
+                Text(detail).font(.caption).foregroundStyle(.secondary).lineLimit(1).minimumScaleFactor(0.75)
+            }
+            VStack(alignment: .leading, spacing: 12) { content }
+                .frame(maxHeight: .infinity, alignment: .top)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background(RoundedRectangle(cornerRadius: 12).fill(Color.primary.opacity(0.04)))
+        .overlay(RoundedRectangle(cornerRadius: 12).stroke(.quaternary))
+    }
+}
+
+struct RowIcon: View {
+    let name: String
+    var body: some View {
+        Image(systemName: name)
+            .foregroundStyle(.secondary)
+            .frame(width: 22)
+    }
+}
+
+struct ToggleRow: View {
+    let icon: String
+    let title: String
+    let description: String?
+    let isOn: Binding<Bool>
+
+    var body: some View {
+        HStack(spacing: 12) {
+            RowIcon(name: icon)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title).fontWeight(.medium)
+                if let description { Text(description).font(.caption).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true) }
+            }
+            Spacer()
+            Toggle("", isOn: isOn).toggleStyle(.switch).labelsHidden()
+        }
     }
 }
 
@@ -412,22 +519,28 @@ struct SettingsSection<Content: View>: View {
 }
 
 struct SliderRow: View {
+    var icon: String?
     let title: String
     let value: Binding<Double>
     let range: ClosedRange<Double>
     let label: String
     let low: String
     let high: String
+    var description: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack {
-                Text(title)
-                Spacer()
-                Text(label).font(.system(.callout, design: .monospaced)).foregroundStyle(.tint)
+        HStack(alignment: .top, spacing: 12) {
+            if let icon { RowIcon(name: icon).padding(.top, 1) }
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(title)
+                    Spacer()
+                    Text(label).font(.system(.callout, design: .monospaced)).foregroundStyle(.tint)
+                }
+                Slider(value: value, in: range)
+                HStack { Text(low); Spacer(); Text(high) }.font(.caption2).foregroundStyle(.secondary)
+                if let description { Text(description).font(.caption).foregroundStyle(.secondary) }
             }
-            Slider(value: value, in: range)
-            HStack { Text(low); Spacer(); Text(high) }.font(.caption2).foregroundStyle(.secondary)
         }
     }
 }

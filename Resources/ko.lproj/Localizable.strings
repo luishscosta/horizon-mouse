@@ -3,9 +3,6 @@
 "%@ identified (sends a keyboard shortcut)." = "%@ 식별됨(키보드 단축키를 보냄).";
 "%@ · %@ → %@" = "%@ · %@ → %@";
 "%@ · mouse default" = "%@ · 마우스 기본값";
-"%ld steps" = "%ld단계";
-"2 steps" = "2단계";
-"500 steps" = "500단계";
 "A single click may wait for a double click when both are set. Left and right buttons keep the default." = "더블 클릭도 설정되어 있으면 한 번 클릭은 더블 클릭을 기다릴 수 있습니다. 왼쪽/오른쪽 버튼은 기본값을 유지합니다.";
 "Accessibility granted, but capture didn't start. Quit and reopen Horizon Mouse; check this app's entry in Accessibility." = "손쉬운 사용이 허용되었지만 캡처가 시작되지 않았습니다. Horizon Mouse를 종료했다가 다시 열고, 손쉬운 사용에서 이 앱의 항목을 확인하세요.";
 "Accessibility not recognized for this process. Check Horizon Mouse in Accessibility and reopen the app." = "이 프로세스에서 손쉬운 사용이 인식되지 않습니다. 손쉬운 사용에서 Horizon Mouse를 확인하고 앱을 다시 여세요.";
@@ -48,7 +45,6 @@
 "Hold to scroll horizontally" = "길게 눌러 가로 스크롤";
 "Horizontal speed" = "가로 속도";
 "How Horizon Mouse runs on your Mac and in which language." = "Horizon Mouse가 Mac에서 어떻게 실행되는지와 사용할 언어.";
-"How many side-wheel steps reach the next desktop. A higher value reveals the next desktop more slowly." = "다음 데스크탑까지 필요한 사이드 휠 단계 수. 값이 클수록 다음 데스크탑이 더 천천히 나타납니다.";
 "Identify button" = "버튼 식별";
 "If your mouse maker's app allows it, keep the side wheel as horizontal scrolling, with no shortcuts. Horizon Mouse doesn't depend on that app." = "마우스 제조사 앱에서 허용된다면 사이드 휠을 단축키 없는 가로 스크롤로 두세요. Horizon Mouse는 해당 앱에 의존하지 않습니다.";
 "Input Monitoring (optional)" = "입력 모니터링(선택 사항)";
@@ -103,13 +99,11 @@
 "Shows Horizon Mouse in the Dock and Command-Tab while it's open." = "열려 있는 동안 Dock과 Command-Tab에 Horizon Mouse를 표시합니다.";
 "Side wheel" = "사이드 휠";
 "Side wheel + %@ → horizontal scrolling" = "사이드 휠 + %@ → 가로 스크롤";
-"Side wheel · %ld steps per desktop" = "사이드 휠 · 데스크탑당 %ld단계";
 "Side wheel · one desktop per roll" = "사이드 휠 · 한 번 돌리면 데스크탑 하나";
 "Side wheel → switch desktop (←)" = "사이드 휠 → 데스크탑 전환(←)";
 "Side wheel → switch desktop (→)" = "사이드 휠 → 데스크탑 전환(→)";
 "Space" = "스페이스";
 "Starts Horizon Mouse in the background when you log in to your Mac." = "Mac에 로그인할 때 Horizon Mouse를 백그라운드에서 시작합니다.";
-"Steps per desktop" = "데스크탑당 단계";
 "Switch Desktops" = "데스크탑 전환";
 "System default (%@)" = "시스템 기본값(%@)";
 "The new language applies after reopening Horizon Mouse." = "새 언어는 Horizon Mouse를 다시 연 후 적용됩니다.";
@@ -136,3 +130,12 @@
 "Not set" = "설정 안 됨";
 "or choose" = "또는 선택";
 "Turn Horizon Mouse on to record system shortcuts such as ⌃→. Until then, pick them from the lists." = "⌃→ 같은 시스템 단축키를 기록하려면 Horizon Mouse를 켜세요. 그전에는 목록에서 선택하세요.";
+"Glide" = "관성";
+"Switch speed" = "전환 속도";
+"Slower" = "더 느리게";
+"Horizontal scrolling" = "가로 스크롤";
+"Side wheel while holding a key" = "키를 누른 채 사이드 휠";
+"How far you roll to reach the next desktop. Faster needs less." = "다음 데스크톱으로 가기 위해 굴리는 양입니다. 빠를수록 적게 굴립니다.";
+"Side wheel · switch speed %ld%%" = "사이드 휠 · 전환 속도 %ld%%";
+"How long scrolling keeps gliding after the wheel stops. Higher feels softer, lower stops with the wheel." = "휠이 멈춘 뒤 스크롤이 얼마나 오래 미끄러지는지입니다. 높을수록 부드럽고, 낮을수록 휠과 함께 멈춥니다.";
+"Try it: scroll here with the main wheel, or hold the key and roll the side wheel." = "체험: 여기서 메인 휠로 스크롤하거나, 키를 누른 채 사이드 휠을 굴려 보세요.";

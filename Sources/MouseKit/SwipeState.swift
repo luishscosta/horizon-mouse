@@ -39,6 +39,17 @@ struct SwipeState {
         value.isFinite ? min(max(value, 2), 500) : 12
     }
 
+    /// Side-wheel steps per desktop as a speed on 0...1 (0 = slowest = 500 steps, 1 = fastest = 2 steps), logarithmic
+    /// so each part of the slider feels like a similar change.
+    static func stepsForSpeed(_ speed: Double) -> Double {
+        let t = speed.isFinite ? min(max(speed, 0), 1) : 0.68
+        return 500 * pow(2.0 / 500.0, t)
+    }
+
+    static func speedForSteps(_ steps: Double) -> Double {
+        log(500 / clampSteps(steps)) / log(250)
+    }
+
     /// Gradual mode: the gesture follows the wheel; `delta` is in desktops.
     mutating func move(by delta: Double, at time: Double) {
         guard delta.isFinite, delta != 0 else { return }
@@ -202,12 +213,12 @@ struct VerticalScrollState {
         return true
     }
 
-    /// `smoothness` 0...1 maps to a 0.02...0.14 s time constant (0.5 = 0.08 s).
+    /// `smoothness` 0...1 maps to a 0.016...0.4 s glide time constant, exponentially (0.5 = 0.08 s, the original feel).
     mutating func frame(at time: Double, smoothness: Double = 0.5) -> Int32 {
         guard isActive else { return 0 }
         let elapsed = min(max(time - lastFrame, 0), 0.1)
         lastFrame = time
-        var step = pendingPixels * (1 - exp(-elapsed / (0.02 + 0.12 * Self.clampUnit(smoothness, default: 0.5))))
+        var step = pendingPixels * (1 - exp(-elapsed / (0.08 * pow(5.0, 2 * (Self.clampUnit(smoothness, default: 0.5) - 0.5)))))
         if abs(pendingPixels - step) < 0.001 { step = pendingPixels }
         pendingPixels -= step
         fractionalPixels += step

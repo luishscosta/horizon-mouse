@@ -3,9 +3,6 @@
 "%@ identified (sends a keyboard shortcut)." = "%@ identificato (invia una scorciatoia da tastiera).";
 "%@ · %@ → %@" = "%@ · %@ → %@";
 "%@ · mouse default" = "%@ · predefinito del mouse";
-"%ld steps" = "%ld passi";
-"2 steps" = "2 passi";
-"500 steps" = "500 passi";
 "A single click may wait for a double click when both are set. Left and right buttons keep the default." = "Un clic singolo può attendere un doppio clic quando entrambi sono impostati. I pulsanti sinistro e destro mantengono il comportamento predefinito.";
 "Accessibility granted, but capture didn't start. Quit and reopen Horizon Mouse; check this app's entry in Accessibility." = "Accessibilità concessa, ma l'acquisizione non è partita. Esci e riapri Horizon Mouse; controlla la voce di questa app in Accessibilità.";
 "Accessibility not recognized for this process. Check Horizon Mouse in Accessibility and reopen the app." = "Accessibilità non riconosciuta per questo processo. Controlla Horizon Mouse in Accessibilità e riapri l'app.";
@@ -48,7 +45,6 @@
 "Hold to scroll horizontally" = "Tieni premuto per scorrere in orizzontale";
 "Horizontal speed" = "Velocità orizzontale";
 "How Horizon Mouse runs on your Mac and in which language." = "Come Horizon Mouse funziona sul tuo Mac e in quale lingua.";
-"How many side-wheel steps reach the next desktop. A higher value reveals the next desktop more slowly." = "Quanti passi della rotellina laterale portano alla scrivania successiva. Un valore più alto rivela la scrivania successiva più lentamente.";
 "Identify button" = "Identifica pulsante";
 "If your mouse maker's app allows it, keep the side wheel as horizontal scrolling, with no shortcuts. Horizon Mouse doesn't depend on that app." = "Se l'app del produttore del mouse lo consente, lascia la rotellina laterale come scorrimento orizzontale, senza scorciatoie. Horizon Mouse non dipende da quell'app.";
 "Input Monitoring (optional)" = "Monitoraggio input (facoltativo)";
@@ -103,13 +99,11 @@
 "Shows Horizon Mouse in the Dock and Command-Tab while it's open." = "Mostra Horizon Mouse nel Dock e in Comando-Tab finché è aperto.";
 "Side wheel" = "Rotellina laterale";
 "Side wheel + %@ → horizontal scrolling" = "Rotellina laterale + %@ → scorrimento orizzontale";
-"Side wheel · %ld steps per desktop" = "Rotellina laterale · %ld passi per scrivania";
 "Side wheel · one desktop per roll" = "Rotellina laterale · una scrivania per giro";
 "Side wheel → switch desktop (←)" = "Rotellina laterale → cambia scrivania (←)";
 "Side wheel → switch desktop (→)" = "Rotellina laterale → cambia scrivania (→)";
 "Space" = "Space";
 "Starts Horizon Mouse in the background when you log in to your Mac." = "Avvia Horizon Mouse in background quando accedi al Mac.";
-"Steps per desktop" = "Passi per scrivania";
 "Switch Desktops" = "Cambia scrivania";
 "System default (%@)" = "Predefinito di sistema (%@)";
 "The new language applies after reopening Horizon Mouse." = "La nuova lingua si applica dopo la riapertura di Horizon Mouse.";
@@ -136,3 +130,12 @@
 "Not set" = "Non impostato";
 "or choose" = "oppure scegli";
 "Turn Horizon Mouse on to record system shortcuts such as ⌃→. Until then, pick them from the lists." = "Attiva Horizon Mouse per registrare le scorciatoie di sistema come ⌃→. Nel frattempo sceglile dagli elenchi.";
+"Glide" = "Scivolamento";
+"Switch speed" = "Velocità del cambio";
+"Slower" = "Più lento";
+"Horizontal scrolling" = "Scorrimento orizzontale";
+"Side wheel while holding a key" = "Rotella laterale con un tasto premuto";
+"How far you roll to reach the next desktop. Faster needs less." = "Quanto ruoti per raggiungere la scrivania successiva. Più veloce ne richiede meno.";
+"Side wheel · switch speed %ld%%" = "Rotella laterale · velocità del cambio %ld%%";
+"How long scrolling keeps gliding after the wheel stops. Higher feels softer, lower stops with the wheel." = "Per quanto tempo lo scorrimento continua a scivolare dopo che la rotella si ferma. Più alto è più morbido, più basso si ferma con la rotella.";
+"Try it: scroll here with the main wheel, or hold the key and roll the side wheel." = "Prova: scorri qui con la rotella principale, oppure tieni premuto il tasto e ruota la rotella laterale.";

@@ -15,6 +15,11 @@ public final class MouseController {
         get { SwipeState.clampSteps(UserDefaults.standard.object(forKey: "Mesa.mouse.stepsPerSpace") as? Double ?? 12) }
         set { UserDefaults.standard.set(SwipeState.clampSteps(newValue), forKey: "Mesa.mouse.stepsPerSpace"); onChange?() }
     }
+    /// Desktop-switch speed of the side wheel on 0...1 (faster = less wheel travel); stored as steps per desktop.
+    public var switchSpeed: Double {
+        get { SwipeState.speedForSteps(stepsPerSpace) }
+        set { stepsPerSpace = SwipeState.stepsForSpeed(newValue).rounded() }
+    }
     public var verticalSpeed: Double {
         get { VerticalScrollState.clampSpeed(UserDefaults.standard.object(forKey: "Mesa.mouse.verticalSpeed") as? Double ?? 0.1) }
         set { UserDefaults.standard.set(VerticalScrollState.clampSpeed(newValue), forKey: "Mesa.mouse.verticalSpeed"); onChange?() }

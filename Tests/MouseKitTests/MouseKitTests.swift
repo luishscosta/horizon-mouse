@@ -279,6 +279,24 @@ final class MouseKitTests: XCTestCase {
         XCTAssertEqual(VerticalScrollState.clampUnit(3, default: 0), 1)
     }
 
+    func testSwitchSpeedMapsToSteps() {
+        XCTAssertEqual(SwipeState.stepsForSpeed(0), 500, accuracy: 0.0001)
+        XCTAssertEqual(SwipeState.stepsForSpeed(1), 2, accuracy: 0.0001)
+        XCTAssertEqual(SwipeState.speedForSteps(500), 0, accuracy: 0.0001)
+        XCTAssertEqual(SwipeState.speedForSteps(2), 1, accuracy: 0.0001)
+        XCTAssertEqual(SwipeState.speedForSteps(12), 0.68, accuracy: 0.01)
+        var previous = Double.infinity
+        for percent in 0...100 {
+            let steps = SwipeState.stepsForSpeed(Double(percent) / 100)
+            XCTAssertLessThan(steps, previous)
+            previous = steps
+            XCTAssertEqual(SwipeState.speedForSteps(steps), Double(percent) / 100, accuracy: 0.0001)
+        }
+        XCTAssertEqual(SwipeState.stepsForSpeed(.nan), SwipeState.stepsForSpeed(0.68))
+        XCTAssertEqual(SwipeState.stepsForSpeed(7), 2, accuracy: 0.0001)
+        XCTAssertEqual(SwipeState.speedForSteps(.nan), SwipeState.speedForSteps(12))
+    }
+
     func testShortcutDisplayAndPlaybackFlags() {
         let right = KeyShortcut.make(keyCode: 124, flags: [.maskControl, .maskSecondaryFn, .maskNumericPad])
         XCTAssertEqual(right.display, "⌃→")
@@ -601,6 +619,7 @@ struct MouseSelfCheck {
         checks.testVerticalSubpixelsSpeedChangesAndCancellation()
         checks.testAccelerationAndSmoothness()
         checks.testShortcutDisplayAndPlaybackFlags()
+        checks.testSwitchSpeedMapsToSteps()
         checks.testVerticalFilteringPreservesOtherInput()
         checks.testVerticalEventPreservesNaturalScrollMetadataAndContext()
         checks.testActiveFilterNeedsAccessibilityRatherThanListenPermission()
@@ -619,7 +638,7 @@ struct MouseSelfCheck {
         checks.testHorizontalScrollKeyMatchesOnlyChosenModifier()
         checks.testHoldingTracksPressUntilReleaseIsSeen()
         checks.testRecoveringLostReleaseFinishesPendingGesture()
-        print("PASS: 31 mouse behavior groups")
+        print("PASS: 32 mouse behavior groups")
     }
 }
 #endif

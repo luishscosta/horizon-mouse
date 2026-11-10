@@ -4,6 +4,13 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.3.5] - 2026-11-09
+
+### Changed
+- Scroll tab redesigned: icon cards for Main wheel, Smoothness, Side wheel and Horizontal scrolling (the key and speed now have their own card).
+- Smoothness (Glide) now has a clearly audible range (about 0.016 to 0.4 s of glide, the middle keeps the previous feel) and a description. The Scroll tab uses two columns, cards in a row share the same height, and Smoothness includes one grid that scrolls both ways to try the settings.
+- Desktop switching without "One desktop per roll" is now a **Switch speed** slider (Slower to Faster) instead of a step count. Existing settings carry over.
+
 ## [0.3.4] - 2026-11-09
 
 ### Changed

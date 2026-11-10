@@ -3,9 +3,6 @@
 "%@ identified (sends a keyboard shortcut)." = "%@ identifié (envoie un raccourci clavier).";
 "%@ · %@ → %@" = "%@ · %@ → %@";
 "%@ · mouse default" = "%@ · par défaut de la souris";
-"%ld steps" = "%ld pas";
-"2 steps" = "2 pas";
-"500 steps" = "500 pas";
 "A single click may wait for a double click when both are set. Left and right buttons keep the default." = "Un clic simple peut attendre un double-clic lorsque les deux sont définis. Les boutons gauche et droit gardent le comportement par défaut.";
 "Accessibility granted, but capture didn't start. Quit and reopen Horizon Mouse; check this app's entry in Accessibility." = "Accessibilité accordée, mais la capture n'a pas démarré. Quittez et rouvrez Horizon Mouse ; vérifiez l'entrée de cette app dans Accessibilité.";
 "Accessibility not recognized for this process. Check Horizon Mouse in Accessibility and reopen the app." = "Accessibilité non reconnue pour ce processus. Vérifiez Horizon Mouse dans Accessibilité et rouvrez l'app.";
@@ -48,7 +45,6 @@
 "Hold to scroll horizontally" = "Maintenir pour défiler horizontalement";
 "Horizontal speed" = "Vitesse horizontale";
 "How Horizon Mouse runs on your Mac and in which language." = "Comment Horizon Mouse fonctionne sur votre Mac et dans quelle langue.";
-"How many side-wheel steps reach the next desktop. A higher value reveals the next desktop more slowly." = "Combien de pas de la molette latérale mènent au bureau suivant. Une valeur plus élevée révèle le bureau suivant plus lentement.";
 "Identify button" = "Identifier le bouton";
 "If your mouse maker's app allows it, keep the side wheel as horizontal scrolling, with no shortcuts. Horizon Mouse doesn't depend on that app." = "Si l'app du fabricant de votre souris le permet, laissez la molette latérale en défilement horizontal, sans raccourcis. Horizon Mouse ne dépend pas de cette app.";
 "Input Monitoring (optional)" = "Surveillance de l'entrée (facultatif)";
@@ -103,13 +99,11 @@
 "Shows Horizon Mouse in the Dock and Command-Tab while it's open." = "Affiche Horizon Mouse dans le Dock et dans Commande-Tab tant qu'il est ouvert.";
 "Side wheel" = "Molette latérale";
 "Side wheel + %@ → horizontal scrolling" = "Molette latérale + %@ → défilement horizontal";
-"Side wheel · %ld steps per desktop" = "Molette latérale · %ld pas par bureau";
 "Side wheel · one desktop per roll" = "Molette latérale · un bureau par tour";
 "Side wheel → switch desktop (←)" = "Molette latérale → changer de bureau (←)";
 "Side wheel → switch desktop (→)" = "Molette latérale → changer de bureau (→)";
 "Space" = "Espace";
 "Starts Horizon Mouse in the background when you log in to your Mac." = "Lance Horizon Mouse en arrière-plan à l'ouverture de session sur votre Mac.";
-"Steps per desktop" = "Pas par bureau";
 "Switch Desktops" = "Changer de bureau";
 "System default (%@)" = "Défaut du système (%@)";
 "The new language applies after reopening Horizon Mouse." = "La nouvelle langue s'applique après la réouverture de Horizon Mouse.";
@@ -136,3 +130,12 @@
 "Not set" = "Non défini";
 "or choose" = "ou choisissez";
 "Turn Horizon Mouse on to record system shortcuts such as ⌃→. Until then, pick them from the lists." = "Activez Horizon Mouse pour enregistrer les raccourcis système comme ⌃→. Sinon, choisissez-les dans les listes.";
+"Glide" = "Glisse";
+"Switch speed" = "Vitesse du changement";
+"Slower" = "Plus lent";
+"Horizontal scrolling" = "Défilement horizontal";
+"Side wheel while holding a key" = "Molette latérale avec une touche maintenue";
+"How far you roll to reach the next desktop. Faster needs less." = "Distance à parcourir pour atteindre le bureau suivant. Plus rapide demande moins.";
+"Side wheel · switch speed %ld%%" = "Molette latérale · vitesse de changement %ld%%";
+"How long scrolling keeps gliding after the wheel stops. Higher feels softer, lower stops with the wheel." = "Durée pendant laquelle le défilement continue de glisser après l'arrêt de la molette. Plus haut est plus doux, plus bas s'arrête avec la molette.";
+"Try it: scroll here with the main wheel, or hold the key and roll the side wheel." = "Essai : faites défiler ici avec la molette principale, ou maintenez la touche et tournez la molette latérale.";

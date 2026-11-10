@@ -157,8 +157,8 @@ final class AppModel: ObservableObject {
     var scrollSmoothness: Binding<Double> {
         Binding(get: { self.mouse.scrollSmoothness * 100 }, set: { self.mouse.scrollSmoothness = $0.rounded() / 100 })
     }
-    var steps: Binding<Double> {
-        Binding(get: { self.mouse.stepsPerSpace }, set: { self.mouse.stepsPerSpace = $0.rounded() })
+    var switchSpeed: Binding<Double> {
+        Binding(get: { self.mouse.switchSpeed * 100 }, set: { self.mouse.switchSpeed = $0.rounded() / 100 })
     }
     var horizontalSpeed: Binding<Double> {
         Binding(get: { self.mouse.horizontalSpeed * 100 }, set: { self.mouse.horizontalSpeed = $0.rounded() / 100 })
