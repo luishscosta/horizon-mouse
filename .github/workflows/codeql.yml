@@ -1,0 +1,22 @@
+name: CodeQL
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 6 * * 1"
+jobs:
+  analyze:
+    runs-on: macos-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: swift
+          build-mode: manual
+      - name: Build
+        run: bash scripts/build.sh
+      - uses: github/codeql-action/analyze@v3

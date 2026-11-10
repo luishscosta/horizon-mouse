@@ -1,6 +1,7 @@
 # Horizon Mouse
 
 [![CI](https://github.com/luishscosta/horizon-mouse/actions/workflows/ci.yml/badge.svg)](https://github.com/luishscosta/horizon-mouse/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/luishscosta/horizon-mouse/actions/workflows/codeql.yml/badge.svg)](https://github.com/luishscosta/horizon-mouse/actions/workflows/codeql.yml)
 [![Release](https://img.shields.io/github/v/release/luishscosta/horizon-mouse)](https://github.com/luishscosta/horizon-mouse/releases/latest)
 [![License: MIT](https://img.shields.io/github/license/luishscosta/horizon-mouse)](LICENSE)
 ![macOS 14+](https://img.shields.io/badge/macOS-14%2B-blue)
