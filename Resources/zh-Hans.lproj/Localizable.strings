@@ -132,3 +132,6 @@
 "Immediate" = "即时";
 "Longer glide" = "更长滑行";
 "Vertical and horizontal scrolling" = "垂直和水平滚动";
+"Choose keys…" = "选择按键…";
+"Key" = "按键";
+"System shortcuts such as ⌘Space cannot be recorded. Pick them here." = "无法录制 ⌘空格 等系统快捷键，请在此选择。";

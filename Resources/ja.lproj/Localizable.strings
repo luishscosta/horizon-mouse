@@ -132,3 +132,6 @@
 "Immediate" = "即時";
 "Longer glide" = "長く滑る";
 "Vertical and horizontal scrolling" = "縦・横スクロール";
+"Choose keys…" = "キーを選択…";
+"Key" = "キー";
+"System shortcuts such as ⌘Space cannot be recorded. Pick them here." = "⌘スペースなどのシステムショートカットは記録できません。ここで選択してください。";

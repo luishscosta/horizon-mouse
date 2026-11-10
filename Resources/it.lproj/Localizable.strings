@@ -132,3 +132,6 @@
 "Immediate" = "Immediata";
 "Longer glide" = "Scorrimento più lungo";
 "Vertical and horizontal scrolling" = "Scorrimento verticale e orizzontale";
+"Choose keys…" = "Scegli i tasti…";
+"Key" = "Tasto";
+"System shortcuts such as ⌘Space cannot be recorded. Pick them here." = "Le scorciatoie di sistema come ⌘Spazio non possono essere registrate. Sceglile qui.";

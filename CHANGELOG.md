@@ -4,6 +4,9 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 
 ## [Unreleased]
 
+### Added
+- **Choose keys…** for the Shortcut action: pick modifiers and a key from lists. System shortcuts such as ⌘Space cannot be recorded (macOS handles them first), but can be picked.
+
 ## [0.3.3] - 2026-11-09
 
 ### Fixed

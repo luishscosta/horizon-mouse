@@ -132,3 +132,6 @@
 "Immediate" = "Anında";
 "Longer glide" = "Daha uzun kayma";
 "Vertical and horizontal scrolling" = "Dikey ve yatay kaydırma";
+"Choose keys…" = "Tuşları seç…";
+"Key" = "Tuş";
+"System shortcuts such as ⌘Space cannot be recorded. Pick them here." = "⌘Boşluk gibi sistem kısayolları kaydedilemez. Buradan seçin.";

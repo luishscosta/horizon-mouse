@@ -183,6 +183,51 @@ struct ButtonsView: View {
     }
 }
 
+/// Picks a shortcut from lists instead of recording it, so system shortcuts like ⌘Space can be used.
+/// State lives in the model: the Command Line Tools toolchain has no SwiftUI macro plugin, so no @State.
+struct ShortcutPicker: View {
+    @ObservedObject var model: AppModel
+    let gesture: MouseGesture
+
+    private static let modifiers: [(CGEventFlags, String)] = [
+        (.maskControl, "⌃"), (.maskAlternate, "⌥"), (.maskShift, "⇧"), (.maskCommand, "⌘"),
+    ]
+    private var key: UInt16 { model.mapping.shortcut(gesture)?.keyCode ?? 49 }
+    private var flags: CGEventFlags {
+        model.mapping.shortcut(gesture).map { CGEventFlags(rawValue: $0.modifiers) } ?? .maskCommand
+    }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack(spacing: 8) {
+                ForEach(Self.modifiers, id: \.1) { flag, symbol in
+                    Toggle(symbol, isOn: Binding(get: { flags.contains(flag) }, set: {
+                        var next = flags
+                        if $0 { next.insert(flag) } else { next.remove(flag) }
+                        save(key: key, flags: next)
+                    }))
+                    .toggleStyle(.button)
+                }
+            }
+            Picker(L("Key"), selection: Binding(get: { key }, set: { save(key: $0, flags: flags) })) {
+                ForEach(AppModel.pickableKeys, id: \.code) { Text($0.label == "Space" ? L("Space") : $0.label).tag($0.code) }
+            }
+            Text(L("System shortcuts such as ⌘Space cannot be recorded. Pick them here."))
+                .font(.caption).foregroundStyle(.secondary).frame(width: 240, alignment: .leading)
+        }
+        .padding(16)
+        .onAppear { if model.mapping.shortcut(gesture) == nil { save(key: 49, flags: .maskCommand) } }
+    }
+
+    private func save(key: UInt16, flags: CGEventFlags) {
+        let kept = flags.intersection([.maskControl, .maskAlternate, .maskShift, .maskCommand])
+        let symbols = Self.modifiers.filter { kept.contains($0.0) }.map(\.1).joined()
+        let label = AppModel.pickableKeys.first { $0.code == key }?.label ?? "?"
+        model.setShortcut(gesture, KeyShortcut(keyCode: key, modifiers: kept.rawValue,
+                                               display: symbols + (label == "Space" ? L("Space") : label)))
+    }
+}
+
 struct GestureEditor: View {
     @ObservedObject var model: AppModel
     let gesture: MouseGesture
@@ -201,6 +246,10 @@ struct GestureEditor: View {
                         (model.mapping.shortcut(gesture)?.display ?? L("Record shortcut"))) {
                     model.recordShortcut(gesture)
                 }
+                Button(L("Choose keys…")) { model.choosingKeys = gesture }
+                    .popover(isPresented: Binding(get: { model.choosingKeys == gesture }, set: { if !$0 { model.choosingKeys = nil } })) {
+                        ShortcutPicker(model: model, gesture: gesture)
+                    }
             }
         }
         .padding(12)
