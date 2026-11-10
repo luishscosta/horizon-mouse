@@ -4,6 +4,11 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-11-09
+
+### Fixed
+- Hold gestures and Mission Control clicks: the lost-release check read the button as released while it was still pressed (swallowed presses never reach the HID state), so every press ended after 0.1 s. The check is removed; a missed release is still recovered on the next press.
+
 ## [0.3.2] - 2026-11-06
 
 ### Changed

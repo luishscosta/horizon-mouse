@@ -113,7 +113,6 @@ public final class MouseController {
     private var machines: [Int: ButtonGestureMachine] = [:]
     private var gestureTimer: Timer?
     /// Buttons seen physically up on one poll; recovered only if still pending on the next (the real event may be in flight).
-    private var releaseSuspects: Set<Int> = []
     private var spacesDragActive = false
     private let marker: Int64 = 0x4d455341
     private var now: Double { ProcessInfo.processInfo.systemUptime }
@@ -458,7 +457,6 @@ public final class MouseController {
             machines[button] = ButtonGestureMachine(handled: mapping.handled)
         }
         var machine = machines[button]!
-        releaseSuspects.remove(button)
         if isDown && machine.isHolding {
             // The previous release never reached us (another tap consumed it): finish that press first.
             recoverRelease(&machine, button: button, mapping: mapping, location: event.location)
@@ -563,10 +561,7 @@ public final class MouseController {
     private func scheduleGestureTimer() {
         gestureTimer?.invalidate()
         gestureTimer = nil
-        // While a button is held, also poll its physical state: a release consumed by another tap
-        // (e.g. Mission Control opening) would otherwise leave the gesture stuck.
-        let polling = canReadButtonState && machines.values.contains(where: \.isHolding) ? now + 0.05 : nil
-        guard let deadline = (machines.values.compactMap(\.deadline) + [polling].compactMap { $0 }).min() else { return }
+        guard let deadline = machines.values.compactMap(\.deadline).min() else { return }
         let timer = Timer(timeInterval: max(deadline - now, 0.001), repeats: false) { [weak self] _ in
             MainActor.assumeIsolated { self?.gestureTick() }
         }
@@ -582,28 +577,10 @@ public final class MouseController {
         if release.pass { postButton(button, down: false, at: location) }
     }
 
-    /// Without Input Monitoring the HID state always reads "up", which would end every hold after 0.1 s,
-    /// so the poll only runs when that permission exists; otherwise a lost release is fixed on the next press.
-    private var canReadButtonState: Bool { CGPreflightListenEventAccess() }
-
-    private func isPhysicallyDown(_ button: Int) -> Bool {
-        if let key = KeyButton.keyCode(button) { return CGEventSource.keyState(.hidSystemState, key: key) }
-        return CGEventSource.buttonState(.hidSystemState, button: CGMouseButton(rawValue: UInt32(button)) ?? .center)
-    }
-
     private func gestureTick() {
         let current = profile
         let location = CGEvent(source: nil)?.location ?? .zero
         for (button, var machine) in machines {
-            if machine.isHolding && canReadButtonState && !isPhysicallyDown(button) {
-                if releaseSuspects.insert(button).inserted { continue }
-                releaseSuspects.remove(button)
-                if let slot = current.slot(forButton: button) {
-                    recoverRelease(&machine, button: button, mapping: current.mapping(slot), location: location)
-                    machines[button] = machine.isIdle ? nil : machine
-                    continue
-                }
-            }
             let outputs = machine.tick(at: now)
             machines[button] = machine.isIdle ? nil : machine
             if let slot = current.slot(forButton: button) { run(outputs, button: button, mapping: current.mapping(slot), location: location) }
@@ -614,7 +591,6 @@ public final class MouseController {
     private func cancelButtonGestures() {
         for button in Array(machines.keys) { _ = machines[button]?.cancel() }
         machines = [:]
-        releaseSuspects = []
         gestureTimer?.invalidate()
         gestureTimer = nil
         endSpacesDrag()
