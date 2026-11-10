@@ -132,6 +132,7 @@
 "Immediate" = "Мгновенно";
 "Longer glide" = "Долгое скольжение";
 "Vertical and horizontal scrolling" = "Вертикальная и горизонтальная прокрутка";
-"Choose keys…" = "Выбрать клавиши…";
 "Key" = "Клавиша";
-"System shortcuts such as ⌘Space cannot be recorded. Pick them here." = "Системные сочетания, например ⌘Пробел, нельзя записать. Выберите их здесь.";
+"Not set" = "Не задано";
+"or choose" = "или выберите";
+"Turn Horizon Mouse on to record system shortcuts such as ⌃→. Until then, pick them from the lists." = "Включите Horizon Mouse, чтобы записывать системные сочетания, например ⌃→. Пока выберите их из списков.";

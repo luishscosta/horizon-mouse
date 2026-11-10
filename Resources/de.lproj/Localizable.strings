@@ -132,6 +132,7 @@
 "Immediate" = "Sofort";
 "Longer glide" = "Längeres Gleiten";
 "Vertical and horizontal scrolling" = "Vertikales und horizontales Scrollen";
-"Choose keys…" = "Tasten wählen …";
 "Key" = "Taste";
-"System shortcuts such as ⌘Space cannot be recorded. Pick them here." = "Systemkurzbefehle wie ⌘Leertaste können nicht aufgezeichnet werden. Wähle sie hier aus.";
+"Not set" = "Nicht festgelegt";
+"or choose" = "oder auswählen";
+"Turn Horizon Mouse on to record system shortcuts such as ⌃→. Until then, pick them from the lists." = "Schalte Horizon Mouse ein, um Systemkurzbefehle wie ⌃→ aufzuzeichnen. Bis dahin wähle sie aus den Listen.";

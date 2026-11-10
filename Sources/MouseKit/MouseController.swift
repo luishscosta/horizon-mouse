@@ -112,6 +112,8 @@ public final class MouseController {
     private var sleeping = false
     private var machines: [Int: ButtonGestureMachine] = [:]
     private var gestureTimer: Timer?
+    private var keyCapture: ((UInt16, CGEventFlags) -> Void)?
+    private var keyUpToSwallow: Int64?
     /// Buttons seen physically up on one poll; recovered only if still pending on the next (the real event may be in flight).
     private var spacesDragActive = false
     private let marker: Int64 = 0x4d455341
@@ -210,6 +212,16 @@ public final class MouseController {
                                                  .keyDown, .keyUp, .flagsChanged, .mouseMoved]
         .reduce(0) { $0 | (1 << $1.rawValue) }
 
+    /// Reports the next key press (with its modifiers) and hides it from the system, so shortcuts macOS would
+    /// handle itself (⌃→, ⌘Space) can be recorded. Returns false when capture is off and no tap is running.
+    public func beginKeyCapture(_ handler: @escaping (UInt16, CGEventFlags) -> Void) -> Bool {
+        guard capture.isEnabled, tap != nil else { return false }
+        keyCapture = handler
+        return true
+    }
+
+    public func endKeyCapture() { keyCapture = nil }
+
     public func requestPermissions() {
         start()
         if !AXIsProcessTrusted() {
@@ -293,6 +305,19 @@ public final class MouseController {
             return passthrough
         }
         guard isEnabled, event.getIntegerValueField(.eventSourceUserData) != marker else { return passthrough }
+        if type == .keyUp, keyUpToSwallow == event.getIntegerValueField(.keyboardEventKeycode) {
+            keyUpToSwallow = nil
+            return nil
+        }
+        if let handler = keyCapture, type == .keyDown || type == .keyUp || type == .flagsChanged {
+            if type == .keyDown && event.getIntegerValueField(.keyboardEventAutorepeat) == 0 {
+                let code = event.getIntegerValueField(.keyboardEventKeycode)
+                keyCapture = nil
+                keyUpToSwallow = code
+                handler(UInt16(code), event.flags)
+            }
+            return nil
+        }
         if type == .otherMouseDown || type == .otherMouseUp || type == .otherMouseDragged {
             return handleButton(type: type, event: event)
         }
@@ -525,7 +550,7 @@ public final class MouseController {
         case .forward: postKey(30, flags: .maskCommand) // ⌘]
         case .shortcut:
             guard let shortcut = mapping.shortcut(gesture) else { return }
-            postKey(CGKeyCode(shortcut.keyCode), flags: CGEventFlags(rawValue: shortcut.modifiers))
+            postKey(CGKeyCode(shortcut.keyCode), flags: shortcut.playbackFlags)
         case .missionControl:
             if !MBDockNotification("com.apple.expose.awake" as CFString) {
                 NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Mission Control.app"))
@@ -534,13 +559,23 @@ public final class MouseController {
         }
     }
 
+    /// Posts at the HID level, upstream of the system shortcut handling, pressing the modifiers like a keyboard would.
     private func postKey(_ key: CGKeyCode, flags: CGEventFlags) {
-        for down in [true, false] {
-            guard let event = CGEvent(keyboardEventSource: nil, virtualKey: key, keyDown: down) else { return }
+        let modifiers: [(CGKeyCode, CGEventFlags)] = [(59, .maskControl), (58, .maskAlternate), (56, .maskShift), (55, .maskCommand)]
+            .filter { flags.contains($0.1) }
+        func post(_ code: CGKeyCode, down: Bool, flags: CGEventFlags, modifier: Bool = false) {
+            guard let event = CGEvent(keyboardEventSource: nil, virtualKey: code, keyDown: down) else { return }
+            if modifier { event.type = .flagsChanged }
             event.flags = flags
             event.setIntegerValueField(.eventSourceUserData, value: marker)
-            event.post(tap: .cgSessionEventTap)
+            event.post(tap: .cghidEventTap)
         }
+        var held: CGEventFlags = []
+        for (code, flag) in modifiers { held.insert(flag); post(code, down: true, flags: held, modifier: true) }
+        let extra = flags.subtracting([.maskControl, .maskAlternate, .maskShift, .maskCommand])
+        post(key, down: true, flags: held.union(extra))
+        post(key, down: false, flags: held.union(extra))
+        for (code, flag) in modifiers.reversed() { held.remove(flag); post(code, down: false, flags: held, modifier: true) }
     }
 
     private func postButton(_ button: Int, down: Bool, at location: CGPoint) {

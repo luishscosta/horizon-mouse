@@ -4,8 +4,13 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 
 ## [Unreleased]
 
-### Added
-- **Choose keys…** for the Shortcut action: pick modifiers and a key from lists. System shortcuts such as ⌘Space cannot be recorded (macOS handles them first), but can be picked.
+## [0.3.4] - 2026-11-09
+
+### Changed
+- Shortcut action: one editor with **Record shortcut** and a modifier/key picker (recording and picking no longer overlap). While capture is on, recording goes through the event tap, so system shortcuts such as ⌃→ and ⌘Space can be recorded.
+
+### Fixed
+- Shortcuts such as ⌃→ and ⌘Space did nothing when fired from a mouse button: keys are now posted at the HID level with the modifier presses and the arrow flags a real keyboard sends.
 
 ## [0.3.3] - 2026-11-09
 

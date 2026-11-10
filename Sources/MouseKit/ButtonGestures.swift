@@ -44,6 +44,48 @@ public struct KeyShortcut: Codable, Equatable, Sendable {
     }
 }
 
+extension KeyShortcut {
+    /// Modifiers a shortcut stores and displays, in display order.
+    public static let modifierSymbols: [(flag: CGEventFlags, symbol: String)] = [
+        (.maskControl, "⌃"), (.maskAlternate, "⌥"), (.maskShift, "⇧"), (.maskCommand, "⌘"),
+    ]
+    public static let modifierMask: CGEventFlags = [.maskControl, .maskAlternate, .maskShift, .maskCommand]
+
+    /// Keys offered in the picker (macOS virtual key codes). "Space" is localized when displayed.
+    public static let keyLabels: [(code: UInt16, label: String)] = [
+        (0, "A"), (11, "B"), (8, "C"), (2, "D"), (14, "E"), (3, "F"), (5, "G"), (4, "H"), (34, "I"), (38, "J"), (40, "K"),
+        (37, "L"), (46, "M"), (45, "N"), (31, "O"), (35, "P"), (12, "Q"), (15, "R"), (1, "S"), (17, "T"), (32, "U"),
+        (9, "V"), (13, "W"), (7, "X"), (16, "Y"), (6, "Z"),
+        (18, "1"), (19, "2"), (20, "3"), (21, "4"), (23, "5"), (22, "6"), (26, "7"), (28, "8"), (25, "9"), (29, "0"),
+        (49, "Space"), (36, "↩"), (48, "⇥"), (51, "⌫"), (53, "⎋"),
+        (123, "←"), (124, "→"), (126, "↑"), (125, "↓"),
+        (122, "F1"), (120, "F2"), (99, "F3"), (118, "F4"), (96, "F5"), (97, "F6"),
+        (98, "F7"), (100, "F8"), (101, "F9"), (109, "F10"), (103, "F11"), (111, "F12"),
+        (27, "-"), (24, "="), (33, "["), (30, "]"), (41, ";"), (39, "'"), (43, ","), (47, "."), (44, "/"), (42, "\\"), (50, "`"),
+    ]
+
+    public static func keyLabel(_ code: UInt16) -> String? {
+        keyLabels.first { $0.code == code }.map { $0.label == "Space" ? L("Space") : $0.label }
+    }
+
+    /// Builds a shortcut with its display text; `character` names keys missing from ``keyLabels``.
+    public static func make(keyCode: UInt16, flags: CGEventFlags, character: String? = nil) -> KeyShortcut {
+        let kept = flags.intersection(modifierMask)
+        let symbols = modifierSymbols.filter { kept.contains($0.flag) }.map(\.symbol).joined()
+        let key = keyLabel(keyCode) ?? character?.uppercased() ?? "?"
+        return KeyShortcut(keyCode: keyCode, modifiers: kept.rawValue, display: symbols + key)
+    }
+
+    public static func isArrow(_ keyCode: UInt16) -> Bool { (123...126).contains(keyCode) }
+
+    /// A real arrow press carries the fn and numeric-pad flags; macOS shortcuts such as ⌃→ only match with them.
+    public var playbackFlags: CGEventFlags {
+        var flags = CGEventFlags(rawValue: modifiers).intersection(Self.modifierMask)
+        if Self.isArrow(keyCode) { flags.formUnion([.maskSecondaryFn, .maskNumericPad]) }
+        return flags
+    }
+}
+
 public struct ButtonMapping: Codable, Equatable, Sendable {
     public var actions: [String: MouseAction] = [:]
     public var shortcuts: [String: KeyShortcut] = [:]

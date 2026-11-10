@@ -279,6 +279,20 @@ final class MouseKitTests: XCTestCase {
         XCTAssertEqual(VerticalScrollState.clampUnit(3, default: 0), 1)
     }
 
+    func testShortcutDisplayAndPlaybackFlags() {
+        let right = KeyShortcut.make(keyCode: 124, flags: [.maskControl, .maskSecondaryFn, .maskNumericPad])
+        XCTAssertEqual(right.display, "⌃→")
+        XCTAssertEqual(right.modifiers, CGEventFlags.maskControl.rawValue)
+        XCTAssertTrue(right.playbackFlags.contains(.maskSecondaryFn))
+        XCTAssertTrue(right.playbackFlags.contains(.maskNumericPad))
+        XCTAssertTrue(right.playbackFlags.contains(.maskControl))
+        let letter = KeyShortcut.make(keyCode: 0, flags: [.maskCommand, .maskShift])
+        XCTAssertEqual(letter.display, "⇧⌘A")
+        XCTAssertFalse(letter.playbackFlags.contains(.maskSecondaryFn))
+        XCTAssertEqual(KeyShortcut.make(keyCode: 200, flags: [], character: "ç").display, "Ç")
+        XCTAssertEqual(KeyShortcut.make(keyCode: 200, flags: []).display, "?")
+    }
+
     func testVerticalFilteringPreservesOtherInput() {
         let wheel = WheelInput(horizontal: 0, vertical: -20)
         XCTAssertEqual(wheel.verticalPixels(capable: true), -20)
@@ -586,6 +600,7 @@ struct MouseSelfCheck {
         checks.testVerticalSmoothingIsSlowerAndPreservesScaledDisplacement()
         checks.testVerticalSubpixelsSpeedChangesAndCancellation()
         checks.testAccelerationAndSmoothness()
+        checks.testShortcutDisplayAndPlaybackFlags()
         checks.testVerticalFilteringPreservesOtherInput()
         checks.testVerticalEventPreservesNaturalScrollMetadataAndContext()
         checks.testActiveFilterNeedsAccessibilityRatherThanListenPermission()
@@ -604,7 +619,7 @@ struct MouseSelfCheck {
         checks.testHorizontalScrollKeyMatchesOnlyChosenModifier()
         checks.testHoldingTracksPressUntilReleaseIsSeen()
         checks.testRecoveringLostReleaseFinishesPendingGesture()
-        print("PASS: 30 mouse behavior groups")
+        print("PASS: 31 mouse behavior groups")
     }
 }
 #endif

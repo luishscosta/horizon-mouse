@@ -132,6 +132,7 @@
 "Immediate" = "即时";
 "Longer glide" = "更长滑行";
 "Vertical and horizontal scrolling" = "垂直和水平滚动";
-"Choose keys…" = "选择按键…";
 "Key" = "按键";
-"System shortcuts such as ⌘Space cannot be recorded. Pick them here." = "无法录制 ⌘空格 等系统快捷键，请在此选择。";
+"Not set" = "未设置";
+"or choose" = "或选择";
+"Turn Horizon Mouse on to record system shortcuts such as ⌃→. Until then, pick them from the lists." = "开启 Horizon Mouse 后可录制 ⌃→ 等系统快捷键。在此之前，请从列表中选择。";
