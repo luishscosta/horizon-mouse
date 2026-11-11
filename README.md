@@ -8,7 +8,6 @@
 ![Universal](https://img.shields.io/badge/arch-Apple%20Silicon%20%7C%20Intel-lightgrey)
 [![Homebrew](https://img.shields.io/badge/brew-luishscosta%2Ftap-orange)](https://github.com/luishscosta/homebrew-tap)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-support-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/luishscosta)
-[![PayPal](https://img.shields.io/badge/PayPal-donate-00457C?logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=32MZMMTQJDBRW)
 
 A small macOS menu bar app that gives any wheel mouse button gestures and smooth desktop (Space) switching.
 
