@@ -139,3 +139,4 @@
 "Side wheel · switch speed %ld%%" = "Боковое колесо · скорость переключения %ld%%";
 "How long scrolling keeps gliding after the wheel stops. Higher feels softer, lower stops with the wheel." = "Как долго прокрутка продолжает скользить после остановки колеса. Выше — мягче, ниже — останавливается вместе с колесом.";
 "Try it: scroll here with the main wheel, or hold the key and roll the side wheel." = "Проверьте: прокрутите здесь основным колесом или удерживайте клавишу и вращайте боковое колесо.";
+"Donate" = "Пожертвовать";

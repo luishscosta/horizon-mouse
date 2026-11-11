@@ -139,3 +139,4 @@
 "Side wheel · switch speed %ld%%" = "Seitenrad · Wechselgeschwindigkeit %ld%%";
 "How long scrolling keeps gliding after the wheel stops. Higher feels softer, lower stops with the wheel." = "Wie lange das Scrollen nach dem Anhalten des Rads weitergleitet. Höher fühlt sich weicher an, niedriger stoppt mit dem Rad.";
 "Try it: scroll here with the main wheel, or hold the key and roll the side wheel." = "Ausprobieren: Hier mit dem Hauptrad scrollen oder Taste halten und das Seitenrad drehen.";
+"Donate" = "Spenden";

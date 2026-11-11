@@ -67,7 +67,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         pauseMenu = item(L("Enable mouse"), #selector(toggleMouse))
         menu.addItem(pauseMenu)
         menu.addItem(.separator())
-        menu.addItem(item(L("Support on Ko-fi"), #selector(openKoFi)))
+        let donate = item(L("Donate"), #selector(openKoFi))
+        if let icon = koFiIcon {
+            let size = NSSize(width: 16 * icon.size.width / icon.size.height, height: 16)
+            donate.image = NSImage(size: size, flipped: false) { icon.draw(in: $0); return true }
+        }
+        menu.addItem(donate)
         menu.addItem(.separator())
         menu.addItem(item(L("Quit Horizon Mouse"), #selector(quit), key: "q"))
         statusItem.menu = menu

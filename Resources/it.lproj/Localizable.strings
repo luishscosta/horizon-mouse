@@ -139,3 +139,4 @@
 "Side wheel · switch speed %ld%%" = "Rotella laterale · velocità del cambio %ld%%";
 "How long scrolling keeps gliding after the wheel stops. Higher feels softer, lower stops with the wheel." = "Per quanto tempo lo scorrimento continua a scivolare dopo che la rotella si ferma. Più alto è più morbido, più basso si ferma con la rotella.";
 "Try it: scroll here with the main wheel, or hold the key and roll the side wheel." = "Prova: scorri qui con la rotella principale, oppure tieni premuto il tasto e ruota la rotella laterale.";
+"Donate" = "Dona";

@@ -70,14 +70,25 @@ struct RootView: View {
     }
 
     private var footer: some View {
+        // Equal-width side columns keep the Ko-fi button centered.
         HStack(spacing: 8) {
-            Circle().fill(model.mouse.isEnabled ? Color.green : Color.secondary).frame(width: 7, height: 7)
-            Text(model.mouse.status).font(.caption).foregroundStyle(.secondary).lineLimit(2)
-            Spacer()
-            if model.tab == .buttons {
-                Button(L("Restore default gestures")) { model.resetMappings() }
-                    .buttonStyle(.link).font(.caption)
+            HStack(spacing: 8) {
+                Circle().fill(model.mouse.isEnabled ? Color.green : Color.secondary).frame(width: 7, height: 7)
+                Text(model.mouse.status).font(.caption).foregroundStyle(.secondary).lineLimit(2)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            if let button = koFiButton {
+                Link(destination: koFiURL) { Image(nsImage: button).resizable().scaledToFit().frame(height: 26) }
+                    .buttonStyle(.plain)
+                    .help(L("Donate"))
+            }
+            Group {
+                if model.tab == .buttons {
+                    Button(L("Restore default gestures")) { model.resetMappings() }
+                        .buttonStyle(.link).font(.caption)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding(.horizontal, 24).padding(.vertical, 10)
     }
@@ -586,11 +597,7 @@ struct AppSettingsView: View {
                 Text(L("Mouse capture needs Accessibility. When you quit, Horizon Mouse releases the mouse."))
                     .font(.caption).foregroundStyle(.secondary)
             }
-            HStack {
-                Text("Horizon Mouse " + L("Version %@", appVersion)).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
-                Spacer()
-                Link(L("Support on Ko-fi"), destination: koFiURL).font(.caption)
-            }
+            Text("Horizon Mouse " + L("Version %@", appVersion)).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
         }
         .frame(maxWidth: 680)
     }
@@ -610,7 +617,14 @@ struct AppSettingsView: View {
 }
 
 /// "0.1.2 (3)" from the bundle; "dev" when run outside an app bundle.
-let koFiURL = URL(string: "https://ko-fi.com/luishscosta")!
+/// `#checkoutModal` makes Ko-fi open its donate popup straight away.
+let koFiURL = URL(string: "https://ko-fi.com/G5E52AG4TG#checkoutModal")!
+
+/// Official Ko-fi cup, shipped in the app bundle (absent when running from `swift run`).
+let koFiIcon: NSImage? = Bundle.main.image(forResource: "KofiCup")
+
+/// Ko-fi's official GitHub button (SVG), shown in the footer of every page.
+let koFiButton: NSImage? = Bundle.main.url(forResource: "KofiButton", withExtension: "svg").flatMap { NSImage(contentsOf: $0) }
 
 let appVersion: String = {
     let info = Bundle.main.infoDictionary ?? [:]
