@@ -78,6 +78,11 @@ struct RootView: View {
                 Button(L("Restore default gestures")) { model.resetMappings() }
                     .buttonStyle(.link).font(.caption)
             }
+            if let button = koFiButton {
+                Link(destination: koFiURL) { Image(nsImage: button).resizable().scaledToFit().frame(height: 26) }
+                    .buttonStyle(.plain)
+                    .help(L("Donate"))
+            }
         }
         .padding(.horizontal, 24).padding(.vertical, 10)
     }
@@ -586,17 +591,7 @@ struct AppSettingsView: View {
                 Text(L("Mouse capture needs Accessibility. When you quit, Horizon Mouse releases the mouse."))
                     .font(.caption).foregroundStyle(.secondary)
             }
-            HStack {
-                Text("Horizon Mouse " + L("Version %@", appVersion)).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
-                Spacer()
-                Link(destination: koFiURL) {
-                    HStack(spacing: 5) {
-                        if let icon = koFiIcon { Image(nsImage: icon).resizable().scaledToFit().frame(height: 14) }
-                        Text(L("Donate"))
-                    }
-                }
-                .font(.caption)
-            }
+            Text("Horizon Mouse " + L("Version %@", appVersion)).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
         }
         .frame(maxWidth: 680)
     }
@@ -621,6 +616,9 @@ let koFiURL = URL(string: "https://ko-fi.com/G5E52AG4TG#checkoutModal")!
 
 /// Official Ko-fi cup, shipped in the app bundle (absent when running from `swift run`).
 let koFiIcon: NSImage? = Bundle.main.image(forResource: "KofiCup")
+
+/// Ko-fi's official GitHub button (SVG), shown in the footer of every page.
+let koFiButton: NSImage? = Bundle.main.url(forResource: "KofiButton", withExtension: "svg").flatMap { NSImage(contentsOf: $0) }
 
 let appVersion: String = {
     let info = Bundle.main.infoDictionary ?? [:]
