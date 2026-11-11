@@ -1,11 +1,20 @@
-// Renders the app icon. Run: swift scripts/make-icon.swift /tmp/AppIcon.iconset && iconutil -c icns /tmp/AppIcon.iconset -o Resources/AppIcon.icns
+// Renders the app icon from scripts/icon-source.png (square artwork, full bleed).
+// Run: swift scripts/make-icon.swift /tmp/AppIcon.iconset && iconutil -c icns /tmp/AppIcon.iconset -o Resources/AppIcon.icns
 import AppKit
+
+let source = NSImage(contentsOfFile: URL(fileURLWithPath: #filePath).deletingLastPathComponent().appendingPathComponent("icon-source.png").path)!
+// Trim the empty margin of the artwork so the mouse reads larger in the Dock.
+let crop = 0.07
+// Shift up by 3% so the artwork (which sits low in the source) is optically centered.
+let fromRect = NSRect(x: source.size.width * crop, y: source.size.height * (crop - 0.03),
+                      width: source.size.width * (1 - 2 * crop), height: source.size.height * (1 - 2 * crop))
 
 func render(_ side: CGFloat) -> Data {
     let rep = NSBitmapImageRep(bitmapDataPlanes: nil, pixelsWide: Int(side), pixelsHigh: Int(side), bitsPerSample: 8,
                                samplesPerPixel: 4, hasAlpha: true, isPlanar: false, colorSpaceName: .deviceRGB, bytesPerRow: 0, bitsPerPixel: 0)!
     NSGraphicsContext.saveGraphicsState()
     NSGraphicsContext.current = NSGraphicsContext(bitmapImageRep: rep)
+    NSGraphicsContext.current?.imageInterpolation = .high
     let s = side / 1024
     // macOS icon grid: 824 pt tile centered on a 1024 pt canvas.
     let tileRect = NSRect(x: 100 * s, y: 100 * s, width: 824 * s, height: 824 * s)
@@ -19,13 +28,10 @@ func render(_ side: CGFloat) -> Data {
     NSColor.black.setFill()
     tile.fill()
     NSGraphicsContext.current?.restoreGraphicsState()
-    NSGradient(colors: [NSColor(red: 0.69, green: 0.42, blue: 1.0, alpha: 1), NSColor(red: 0.36, green: 0.13, blue: 0.66, alpha: 1)])!
-        .draw(in: tile, angle: -90)
-    let config = NSImage.SymbolConfiguration(pointSize: 420 * s, weight: .regular).applying(.init(paletteColors: [.white]))
-    if let symbol = NSImage(systemSymbolName: "computermouse.fill", accessibilityDescription: nil)?.withSymbolConfiguration(config) {
-        let size = symbol.size
-        symbol.draw(in: NSRect(x: tileRect.midX - size.width / 2, y: tileRect.midY - size.height / 2, width: size.width, height: size.height))
-    }
+    NSGraphicsContext.current?.saveGraphicsState()
+    tile.addClip()
+    source.draw(in: tileRect, from: fromRect, operation: .copy, fraction: 1)
+    NSGraphicsContext.current?.restoreGraphicsState()
     NSGraphicsContext.restoreGraphicsState()
     return rep.representation(using: .png, properties: [:])!
 }

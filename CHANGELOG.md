@@ -4,6 +4,11 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.3.6] - 2026-11-11
+
+### Changed
+- New app icon (mouse over a purple arc with left/right arrows), sized to the macOS icon grid so it reads well in the Dock.
+
 ## [0.3.5] - 2026-11-09
 
 ### Changed
