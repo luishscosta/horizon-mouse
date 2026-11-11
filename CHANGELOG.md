@@ -4,10 +4,10 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 
 ## [Unreleased]
 
-## [0.3.6] - 2026-11-11
+## [0.3.7] - 2026-11-11
 
 ### Changed
-- New app icon (mouse over a purple arc with left/right arrows), sized to the macOS icon grid so it reads well in the Dock.
+- New app icon: vector mouse over a light purple arc with left/right arrows on a deep purple tile, sized to the macOS icon grid so it reads well in the Dock. Replaces the dark-background icon tagged as 0.3.6, which was never released.
 
 ## [0.3.5] - 2026-11-09
 
