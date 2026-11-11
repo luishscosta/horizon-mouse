@@ -139,3 +139,4 @@
 "Side wheel · switch speed %ld%%" = "Molette latérale · vitesse de changement %ld%%";
 "How long scrolling keeps gliding after the wheel stops. Higher feels softer, lower stops with the wheel." = "Durée pendant laquelle le défilement continue de glisser après l'arrêt de la molette. Plus haut est plus doux, plus bas s'arrête avec la molette.";
 "Try it: scroll here with the main wheel, or hold the key and roll the side wheel." = "Essai : faites défiler ici avec la molette principale, ou maintenez la touche et tournez la molette latérale.";
+"Donate" = "Faire un don";

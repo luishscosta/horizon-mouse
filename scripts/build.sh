@@ -15,7 +15,7 @@ mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp "$binary_dir/HorizonMouse" "$app/Contents/MacOS/HorizonMouse"
 cp Resources/Info.plist "$app/Contents/Info.plist"
 cp -R Resources/*.lproj "$app/Contents/Resources/"
-cp LICENSE Resources/AppIcon.icns "$app/Contents/Resources/"
+cp LICENSE Resources/AppIcon.icns Resources/KofiCup.png "$app/Contents/Resources/"
 # A stable certificate keeps the Accessibility grant across updates (it is tied to the certificate, not the build).
 # Ad-hoc ("-") works too, but every build then needs a new grant. See CONTRIBUTING.md.
 identity="${HORIZON_SIGN_IDENTITY:-Mac Mouse Desk Self-Signed}"

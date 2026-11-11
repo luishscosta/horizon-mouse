@@ -589,7 +589,13 @@ struct AppSettingsView: View {
             HStack {
                 Text("Horizon Mouse " + L("Version %@", appVersion)).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
                 Spacer()
-                Link(L("Support on Ko-fi"), destination: koFiURL).font(.caption)
+                Link(destination: koFiURL) {
+                    HStack(spacing: 5) {
+                        if let icon = koFiIcon { Image(nsImage: icon).resizable().scaledToFit().frame(height: 14) }
+                        Text(L("Donate"))
+                    }
+                }
+                .font(.caption)
             }
         }
         .frame(maxWidth: 680)
@@ -610,7 +616,11 @@ struct AppSettingsView: View {
 }
 
 /// "0.1.2 (3)" from the bundle; "dev" when run outside an app bundle.
-let koFiURL = URL(string: "https://ko-fi.com/luishscosta")!
+/// `#checkoutModal` makes Ko-fi open its donate popup straight away.
+let koFiURL = URL(string: "https://ko-fi.com/luishscosta#checkoutModal")!
+
+/// Official Ko-fi cup, shipped in the app bundle (absent when running from `swift run`).
+let koFiIcon: NSImage? = Bundle.main.image(forResource: "KofiCup")
 
 let appVersion: String = {
     let info = Bundle.main.infoDictionary ?? [:]

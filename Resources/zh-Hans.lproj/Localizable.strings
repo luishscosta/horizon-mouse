@@ -139,3 +139,4 @@
 "Side wheel · switch speed %ld%%" = "侧滚轮 · 切换速度 %ld%%";
 "How long scrolling keeps gliding after the wheel stops. Higher feels softer, lower stops with the wheel." = "滚轮停止后滚动继续滑行的时间。数值越高越柔和，越低则随滚轮立即停止。";
 "Try it: scroll here with the main wheel, or hold the key and roll the side wheel." = "试一试：在此用主滚轮滚动，或按住按键并滚动侧滚轮。";
+"Donate" = "捐赠";

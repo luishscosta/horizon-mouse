@@ -139,3 +139,4 @@
 "Side wheel · switch speed %ld%%" = "サイドホイール · 切り替え速度 %ld%%";
 "How long scrolling keeps gliding after the wheel stops. Higher feels softer, lower stops with the wheel." = "ホイールを止めたあと、スクロールがどれだけ滑り続けるか。高いほど柔らかく、低いほどホイールと同時に止まります。";
 "Try it: scroll here with the main wheel, or hold the key and roll the side wheel." = "お試し：ここでメインホイールをスクロールするか、キーを押しながらサイドホイールを回してください。";
+"Donate" = "寄付";

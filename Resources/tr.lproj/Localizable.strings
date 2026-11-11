@@ -139,3 +139,4 @@
 "Side wheel · switch speed %ld%%" = "Yan tekerlek · geçiş hızı %ld%%";
 "How long scrolling keeps gliding after the wheel stops. Higher feels softer, lower stops with the wheel." = "Tekerlek durduktan sonra kaydırmanın ne kadar süre kaymaya devam ettiği. Yüksek değer daha yumuşak, düşük değer tekerlekle birlikte durur.";
 "Try it: scroll here with the main wheel, or hold the key and roll the side wheel." = "Deneyin: Burada ana tekerlekle kaydırın veya tuşu basılı tutup yan tekerleği çevirin.";
+"Donate" = "Bağış yap";

@@ -139,3 +139,4 @@
 "Side wheel · switch speed %ld%%" = "사이드 휠 · 전환 속도 %ld%%";
 "How long scrolling keeps gliding after the wheel stops. Higher feels softer, lower stops with the wheel." = "휠이 멈춘 뒤 스크롤이 얼마나 오래 미끄러지는지입니다. 높을수록 부드럽고, 낮을수록 휠과 함께 멈춥니다.";
 "Try it: scroll here with the main wheel, or hold the key and roll the side wheel." = "체험: 여기서 메인 휠로 스크롤하거나, 키를 누른 채 사이드 휠을 굴려 보세요.";
+"Donate" = "후원하기";
