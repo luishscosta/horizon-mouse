@@ -586,7 +586,11 @@ struct AppSettingsView: View {
                 Text(L("Mouse capture needs Accessibility. When you quit, Horizon Mouse releases the mouse."))
                     .font(.caption).foregroundStyle(.secondary)
             }
-            Text("Horizon Mouse " + L("Version %@", appVersion)).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
+            HStack {
+                Text("Horizon Mouse " + L("Version %@", appVersion)).font(.caption).foregroundStyle(.secondary).textSelection(.enabled)
+                Spacer()
+                Link(L("Support on Ko-fi"), destination: koFiURL).font(.caption)
+            }
         }
         .frame(maxWidth: 680)
     }
@@ -606,6 +610,8 @@ struct AppSettingsView: View {
 }
 
 /// "0.1.2 (3)" from the bundle; "dev" when run outside an app bundle.
+let koFiURL = URL(string: "https://ko-fi.com/luishscosta")!
+
 let appVersion: String = {
     let info = Bundle.main.infoDictionary ?? [:]
     guard let short = info["CFBundleShortVersionString"] as? String else { return "dev" }

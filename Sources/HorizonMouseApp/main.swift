@@ -67,6 +67,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         pauseMenu = item(L("Enable mouse"), #selector(toggleMouse))
         menu.addItem(pauseMenu)
         menu.addItem(.separator())
+        menu.addItem(item(L("Support on Ko-fi"), #selector(openKoFi)))
+        menu.addItem(.separator())
         menu.addItem(item(L("Quit Horizon Mouse"), #selector(quit), key: "q"))
         statusItem.menu = menu
 
@@ -106,6 +108,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     private func updateStatusItem() { statusItem.isVisible = model.showMenuBarIcon.wrappedValue }
 
     @objc private func showSettings() { window.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true) }
+    @objc private func openKoFi() { NSWorkspace.shared.open(koFiURL) }
     @objc private func quit() { NSApp.terminate(nil) }
     @objc private func toggleMouse() { model.mouse.userSetEnabled(!model.mouse.isEnabled) }
 
