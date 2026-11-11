@@ -70,19 +70,25 @@ struct RootView: View {
     }
 
     private var footer: some View {
+        // Equal-width side columns keep the Ko-fi button centered.
         HStack(spacing: 8) {
-            Circle().fill(model.mouse.isEnabled ? Color.green : Color.secondary).frame(width: 7, height: 7)
-            Text(model.mouse.status).font(.caption).foregroundStyle(.secondary).lineLimit(2)
-            Spacer()
-            if model.tab == .buttons {
-                Button(L("Restore default gestures")) { model.resetMappings() }
-                    .buttonStyle(.link).font(.caption)
+            HStack(spacing: 8) {
+                Circle().fill(model.mouse.isEnabled ? Color.green : Color.secondary).frame(width: 7, height: 7)
+                Text(model.mouse.status).font(.caption).foregroundStyle(.secondary).lineLimit(2)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             if let button = koFiButton {
                 Link(destination: koFiURL) { Image(nsImage: button).resizable().scaledToFit().frame(height: 26) }
                     .buttonStyle(.plain)
                     .help(L("Donate"))
             }
+            Group {
+                if model.tab == .buttons {
+                    Button(L("Restore default gestures")) { model.resetMappings() }
+                        .buttonStyle(.link).font(.caption)
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .padding(.horizontal, 24).padding(.vertical, 10)
     }
