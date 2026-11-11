@@ -617,7 +617,7 @@ struct AppSettingsView: View {
 
 /// "0.1.2 (3)" from the bundle; "dev" when run outside an app bundle.
 /// `#checkoutModal` makes Ko-fi open its donate popup straight away.
-let koFiURL = URL(string: "https://ko-fi.com/luishscosta#checkoutModal")!
+let koFiURL = URL(string: "https://ko-fi.com/G5E52AG4TG#checkoutModal")!
 
 /// Official Ko-fi cup, shipped in the app bundle (absent when running from `swift run`).
 let koFiIcon: NSImage? = Bundle.main.image(forResource: "KofiCup")
