@@ -4,6 +4,8 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.3.8] - 2026-11-11
+
 ### Changed
 - The app no longer shows in the Dock by default; it lives in the menu bar. Turn on **Show in Dock** in Settings to get the Dock icon back.
 - Cmd+Q and Dock > Quit now only close the window while the app runs in the background with its menu bar icon. The menu bar icon's Quit still quits.
