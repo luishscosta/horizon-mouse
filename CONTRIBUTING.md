@@ -32,6 +32,10 @@ First check that no other mouse remapper is running: they compete for the same e
 
 Keep changes small and focused. The app must not gain telemetry, accounts, servers or external dependencies.
 
+## Releases
+
+Releases are automatic. A pull request that raises `CFBundleShortVersionString` (and `CFBundleVersion`) in `Resources/Info.plist` and moves the `[Unreleased]` notes of `CHANGELOG.md` to the new version publishes that version when it is merged: the `Release` workflow tests, builds with the maintainer's signing certificate, creates the `vX.Y.Z` tag and GitHub release with the dmg, zip and checksums, and updates the Homebrew tap. It needs the repository secrets `HORIZON_SIGN_CERT_P12` (base64 `.p12` of the certificate), `HORIZON_SIGN_CERT_PASSWORD` and, for the tap, `TAP_GITHUB_TOKEN`.
+
 ## License
 
 By contributing, you agree that your contribution is licensed under the project's [MIT license](LICENSE).

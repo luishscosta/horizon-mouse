@@ -1,0 +1,86 @@
+name: Release
+# Publishes a release when a merge to main bumps the version in Resources/Info.plist.
+# Needs the repository secrets HORIZON_SIGN_CERT_P12 (base64 .p12 of the signing certificate) and
+# HORIZON_SIGN_CERT_PASSWORD. TAP_GITHUB_TOKEN is optional: with it the Homebrew tap is updated too.
+on:
+  push:
+    branches: [main]
+    paths: [Resources/Info.plist]
+  workflow_dispatch:
+
+concurrency: release
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+      TAP_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the version is new
+        id: version
+        run: |
+          version=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" Resources/Info.plist)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if gh release view "v$version" >/dev/null 2>&1; then
+            echo "v$version already released, nothing to do."
+            echo "new=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "new=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Test
+        if: steps.version.outputs.new == 'true'
+        run: bash scripts/test.sh
+
+      - name: Import signing certificate
+        if: steps.version.outputs.new == 'true'
+        env:
+          P12: ${{ secrets.HORIZON_SIGN_CERT_P12 }}
+          P12_PASSWORD: ${{ secrets.HORIZON_SIGN_CERT_PASSWORD }}
+        run: |
+          [ -n "$P12" ] || { echo "::error::Secret HORIZON_SIGN_CERT_P12 is missing: an ad-hoc signed release would make every user grant Accessibility again."; exit 1; }
+          keychain="$RUNNER_TEMP/sign.keychain-db"
+          password=$(uuidgen)
+          security create-keychain -p "$password" "$keychain"
+          security set-keychain-settings -lut 21600 "$keychain"
+          security unlock-keychain -p "$password" "$keychain"
+          echo "$P12" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security import "$RUNNER_TEMP/cert.p12" -k "$keychain" -P "$P12_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$password" "$keychain" >/dev/null
+          security list-keychains -d user -s "$keychain" $(security list-keychains -d user | tr -d '"')
+          rm "$RUNNER_TEMP/cert.p12"
+
+      - name: Build
+        if: steps.version.outputs.new == 'true'
+        run: |
+          bash scripts/build.sh
+          codesign -dvv "${TMPDIR:-/tmp}/horizonmouse-local-build/Horizon Mouse.app" 2>&1 | grep -q "Authority=Mac Mouse Desk Self-Signed" \
+            || { echo "::error::The app was not signed with the release certificate."; exit 1; }
+
+      - name: Publish release
+        if: steps.version.outputs.new == 'true'
+        run: |
+          version=${{ steps.version.outputs.version }}
+          awk -v v="$version" '$0 ~ "^## \\[" v "\\]" {on=1; next} /^## \[/ {on=0} on' CHANGELOG.md > notes.md
+          [ -s notes.md ] || echo "See the [changelog](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md)." > notes.md
+          gh release create "v$version" dist/HorizonMouse.dmg dist/HorizonMouse.zip dist/SHA256SUMS.txt \
+            --title "Horizon Mouse $version" --notes-file notes.md --target "$GITHUB_SHA"
+
+      - name: Update Homebrew tap
+        if: steps.version.outputs.new == 'true' && env.TAP_TOKEN != ''
+        run: |
+          version=${{ steps.version.outputs.version }}
+          sha=$(awk '/HorizonMouse.zip/ {print $1}' dist/SHA256SUMS.txt)
+          git clone "https://x-access-token:$TAP_TOKEN@github.com/luishscosta/homebrew-tap.git" tap
+          cd tap
+          sed -i '' -E "s/^  version \".*\"/  version \"$version\"/; s/^  sha256 \".*\"/  sha256 \"$sha\"/" Casks/horizon-mouse.rb
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "horizon-mouse $version"
+          git push
