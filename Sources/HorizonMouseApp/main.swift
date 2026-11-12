@@ -33,10 +33,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         showSettings()
     }
 
+    private var reallyQuit = false
+
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        // A plain quit request (Dock > Quit, `tell app to quit`) only closes the window while the app can live in the
+        // menu bar. Quits with a reason (log out, restart, shut down) and the menu bar icon's Quit always go through.
+        let quitReasonKey: AEKeyword = 0x7768793F // 'why?'
+        let hasReason = NSAppleEventManager.shared().currentAppleEvent?.attributeDescriptor(forKeyword: quitReasonKey) != nil
+        if !reallyQuit && !hasReason && runsInBackground {
+            window.close()
+            return .terminateCancel
+        }
         model.mouse.stop()
         return .terminateNow
     }
+
+    private var runsInBackground: Bool { model.runInBackground.wrappedValue && model.showMenuBarIcon.wrappedValue }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         showSettings()
@@ -59,10 +71,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         let menu = NSMenu()
         menu.autoenablesItems = false
         menu.delegate = self
-        let version = NSMenuItem(title: "Horizon Mouse " + L("Version %@", appVersion), action: nil, keyEquivalent: "")
-        version.isEnabled = false
-        menu.addItem(version)
-        menu.addItem(.separator())
         menu.addItem(item(L("Open Horizon Mouse Settings…"), #selector(showSettings), key: ","))
         pauseMenu = item(L("Enable mouse"), #selector(toggleMouse))
         menu.addItem(pauseMenu)
@@ -74,13 +82,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         }
         menu.addItem(donate)
         menu.addItem(.separator())
+        let version = NSMenuItem(title: "Horizon Mouse " + L("Version %@", appVersion), action: nil, keyEquivalent: "")
+        version.isEnabled = false
+        menu.addItem(version)
         menu.addItem(item(L("Quit Horizon Mouse"), #selector(quit), key: "q"))
         statusItem.menu = menu
 
         // Standard editing menu keeps copy/paste/select-all available in the text fields.
         let mainMenu = NSMenu()
         let appMenu = NSMenu()
-        appMenu.addItem(item(L("Quit Horizon Mouse"), #selector(quit), key: "q"))
+        appMenu.addItem(item(L("Quit Horizon Mouse"), #selector(quitFromAppMenu), key: "q"))
         let appItem = NSMenuItem()
         appItem.submenu = appMenu
         mainMenu.addItem(appItem)
@@ -114,7 +125,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
 
     @objc private func showSettings() { window.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true) }
     @objc private func openKoFi() { NSWorkspace.shared.open(koFiURL) }
-    @objc private func quit() { NSApp.terminate(nil) }
+    @objc private func quit() { reallyQuit = true; NSApp.terminate(nil) }
+    /// Cmd+Q only closes the window while the app can keep running in the background with its menu bar icon;
+    /// the menu bar icon's Quit item always quits.
+    @objc private func quitFromAppMenu() {
+        if runsInBackground { window.close() } else { NSApp.terminate(nil) }
+    }
     @objc private func toggleMouse() { model.mouse.userSetEnabled(!model.mouse.isEnabled) }
 
     private func item(_ title: String, _ action: Selector, key: String = "") -> NSMenuItem {

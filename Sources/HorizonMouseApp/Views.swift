@@ -434,9 +434,9 @@ struct ScrollTryOut: View {
             Text(L("Try it: scroll here with the main wheel, or hold the key and roll the side wheel."))
                 .font(.caption).foregroundStyle(.secondary)
             ScrollView([.vertical, .horizontal]) {
-                VStack(spacing: 6) {
+                LazyVStack(spacing: 6) {
                     ForEach(0..<40, id: \.self) { row in
-                        HStack(spacing: 6) {
+                        LazyHStack(spacing: 6) {
                             ForEach(0..<30, id: \.self) { column in
                                 RoundedRectangle(cornerRadius: 5)
                                     .fill(Color.accentColor.opacity((row + column) % 2 == 0 ? 0.35 : 0.15))
