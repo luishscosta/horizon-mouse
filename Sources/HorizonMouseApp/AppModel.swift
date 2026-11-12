@@ -186,7 +186,7 @@ final class AppModel: ObservableObject {
                 set: { UserDefaults.standard.set($0, forKey: "Mesa.app.menubar"); self.objectWillChange.send(); self.onMenuBarChange?() })
     }
     var showInDock: Binding<Bool> {
-        Binding(get: { UserDefaults.standard.object(forKey: "Mesa.app.dock") as? Bool ?? true },
+        Binding(get: { UserDefaults.standard.object(forKey: "Mesa.app.dock") as? Bool ?? false },
                 set: { UserDefaults.standard.set($0, forKey: "Mesa.app.dock"); self.objectWillChange.send(); self.onDockChange?() })
     }
     var openAtLogin: Binding<Bool> {
