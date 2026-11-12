@@ -7,6 +7,10 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 ### Changed
 - The app no longer shows in the Dock by default; it lives in the menu bar. Turn on **Show in Dock** in Settings to get the Dock icon back.
 - Cmd+Q and Dock > Quit now only close the window while the app runs in the background with its menu bar icon. The menu bar icon's Quit still quits.
+- The menu bar menu now starts with **Open Settings**; the version line moved down next to Quit.
+
+### Fixed
+- Switching to the Scroll tab no longer lags: its try-out grid is built lazily.
 
 ### Added
 - Ko-fi **Donate** button in the footer of every page and a Donate item in the menu bar menu.
