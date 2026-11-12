@@ -33,10 +33,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         showSettings()
     }
 
+    private var reallyQuit = false
+
     func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        // A plain quit request (Dock > Quit, `tell app to quit`) only closes the window while the app can live in the
+        // menu bar. Quits with a reason (log out, restart, shut down) and the menu bar icon's Quit always go through.
+        let quitReasonKey: AEKeyword = 0x7768793F // 'why?'
+        let hasReason = NSAppleEventManager.shared().currentAppleEvent?.attributeDescriptor(forKeyword: quitReasonKey) != nil
+        if !reallyQuit && !hasReason && runsInBackground {
+            window.close()
+            return .terminateCancel
+        }
         model.mouse.stop()
         return .terminateNow
     }
+
+    private var runsInBackground: Bool { model.runInBackground.wrappedValue && model.showMenuBarIcon.wrappedValue }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         showSettings()
@@ -114,11 +126,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
 
     @objc private func showSettings() { window.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true) }
     @objc private func openKoFi() { NSWorkspace.shared.open(koFiURL) }
-    @objc private func quit() { NSApp.terminate(nil) }
+    @objc private func quit() { reallyQuit = true; NSApp.terminate(nil) }
     /// Cmd+Q only closes the window while the app can keep running in the background with its menu bar icon;
     /// the menu bar icon's Quit item always quits.
     @objc private func quitFromAppMenu() {
-        if model.runInBackground.wrappedValue && model.showMenuBarIcon.wrappedValue { window.close() } else { NSApp.terminate(nil) }
+        if runsInBackground { window.close() } else { NSApp.terminate(nil) }
     }
     @objc private func toggleMouse() { model.mouse.userSetEnabled(!model.mouse.isEnabled) }
 
