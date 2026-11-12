@@ -71,10 +71,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         let menu = NSMenu()
         menu.autoenablesItems = false
         menu.delegate = self
-        let version = NSMenuItem(title: "Horizon Mouse " + L("Version %@", appVersion), action: nil, keyEquivalent: "")
-        version.isEnabled = false
-        menu.addItem(version)
-        menu.addItem(.separator())
         menu.addItem(item(L("Open Horizon Mouse Settings…"), #selector(showSettings), key: ","))
         pauseMenu = item(L("Enable mouse"), #selector(toggleMouse))
         menu.addItem(pauseMenu)
@@ -86,6 +82,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         }
         menu.addItem(donate)
         menu.addItem(.separator())
+        let version = NSMenuItem(title: "Horizon Mouse " + L("Version %@", appVersion), action: nil, keyEquivalent: "")
+        version.isEnabled = false
+        menu.addItem(version)
         menu.addItem(item(L("Quit Horizon Mouse"), #selector(quit), key: "q"))
         statusItem.menu = menu
 
