@@ -80,7 +80,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
         // Standard editing menu keeps copy/paste/select-all available in the text fields.
         let mainMenu = NSMenu()
         let appMenu = NSMenu()
-        appMenu.addItem(item(L("Quit Horizon Mouse"), #selector(quit), key: "q"))
+        appMenu.addItem(item(L("Quit Horizon Mouse"), #selector(quitFromAppMenu), key: "q"))
         let appItem = NSMenuItem()
         appItem.submenu = appMenu
         mainMenu.addItem(appItem)
@@ -115,6 +115,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     @objc private func showSettings() { window.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true) }
     @objc private func openKoFi() { NSWorkspace.shared.open(koFiURL) }
     @objc private func quit() { NSApp.terminate(nil) }
+    /// Cmd+Q only closes the window while the app can keep running in the background with its menu bar icon;
+    /// the menu bar icon's Quit item always quits.
+    @objc private func quitFromAppMenu() {
+        if model.runInBackground.wrappedValue && model.showMenuBarIcon.wrappedValue { window.close() } else { NSApp.terminate(nil) }
+    }
     @objc private func toggleMouse() { model.mouse.userSetEnabled(!model.mouse.isEnabled) }
 
     private func item(_ title: String, _ action: Selector, key: String = "") -> NSMenuItem {
