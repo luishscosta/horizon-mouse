@@ -444,6 +444,15 @@ final class MouseKitTests: XCTestCase {
         XCTAssertTrue(holding.up(at: 0.8).pass)
     }
 
+    func testSideButtonClickSurvivesPointerMovement() {
+        var machine = ButtonGestureMachine(handled: [.click], ignoresMovement: true)
+        _ = machine.down(at: 0)
+        let moved = machine.move(dx: 40, dy: 10)
+        XCTAssertFalse(moved.pass)
+        XCTAssertEqual(moved.outputs, [])
+        XCTAssertEqual(machine.up(at: 0.2).outputs, [.perform(.click)])
+    }
+
     func testHoldFiresOnceAndSwallowsRelease() {
         var machine = ButtonGestureMachine(handled: [.hold])
         _ = machine.down(at: 0)
@@ -629,6 +638,7 @@ struct MouseSelfCheck {
         checks.testClickReplaysWhenOnlyDragIsMapped()
         checks.testDragStartsAfterThresholdAndEnds()
         checks.testUnmappedDragAndHoldFallBackToNativeButton()
+        checks.testSideButtonClickSurvivesPointerMovement()
         checks.testHoldFiresOnceAndSwallowsRelease()
         checks.testDoubleClickWaitsForWindowThenFallsBackToClick()
         checks.testCancelEndsDragAndProfileResolvesButtons()

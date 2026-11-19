@@ -106,6 +106,7 @@ public final class MouseController {
     private var endTimers: [Timer] = []
     private var capture = MouseCaptureState()
     private var observers: [NSObjectProtocol] = []
+    private var activity: NSObjectProtocol?
     private var swipe = SwipeState()
     private var activeSender: UInt64 = 0
     private var verticalSender: UInt64 = 0
@@ -145,6 +146,9 @@ public final class MouseController {
     public func start() {
         guard !started else { return }
         started = true
+        // A background app with no visible window gets App Nap'd when idle, which delays the tap's first events
+        // past the system timeout. Idle system sleep stays allowed.
+        activity = ProcessInfo.processInfo.beginActivity(options: .userInitiatedAllowingIdleSystemSleep, reason: "Mouse button capture")
         _ = MBInitialize()
         let center = NSWorkspace.shared.notificationCenter
         observers.append(center.addObserver(forName: NSWorkspace.willSleepNotification, object: nil, queue: .main) { [weak self] _ in
@@ -243,6 +247,8 @@ public final class MouseController {
         observationTimer = nil
         observers.forEach { NSWorkspace.shared.notificationCenter.removeObserver($0) }
         observers = []
+        if let activity { ProcessInfo.processInfo.endActivity(activity) }
+        activity = nil
         started = false
         status = L("Paused")
         onChange?()
@@ -270,6 +276,11 @@ public final class MouseController {
     private func refresh() {
         let count = MBTargetDeviceCount()
         let permission = currentPermissions
+        // The system can disable a tap without telling the callback; this revives it within a quarter of a second.
+        if isEnabled, let tap, !CGEvent.tapIsEnabled(tap: tap) {
+            log.info("event tap found disabled; re-enabling")
+            CGEvent.tapEnable(tap: tap, enable: true)
+        }
         if isEnabled, tap != nil, permission.inputMonitoring, !tapHasKeyAccess {
             // Input Monitoring was just granted: recreate the tap so buttons that send a shortcut are seen.
             deactivate()
@@ -304,9 +315,10 @@ public final class MouseController {
     private func handle(type: CGEventType, event: CGEvent) -> Unmanaged<CGEvent>? {
         let passthrough = Unmanaged.passUnretained(event)
         if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
-            deactivate()
-            status = L("Capture stopped by the system; turn it on again")
-            onChange?()
+            // The system switches a slow tap off (e.g. the first event after a long idle). Turn it straight back on
+            // instead of waiting for the refresh timer, which would leave the buttons dead for a few presses.
+            log.info("event tap disabled by the system (\(type.rawValue, privacy: .public)); re-enabling")
+            if let tap { CGEvent.tapEnable(tap: tap, enable: true) }
             return passthrough
         }
         guard isEnabled, event.getIntegerValueField(.eventSourceUserData) != marker else { return passthrough }
@@ -484,7 +496,7 @@ public final class MouseController {
                 if isDown { note(L("%@ · mouse default", slot.title)) }
                 return passthrough
             }
-            machines[button] = ButtonGestureMachine(handled: mapping.handled)
+            machines[button] = ButtonGestureMachine(handled: mapping.handled, ignoresMovement: slot == .front || slot == .back)
         }
         var machine = machines[button]!
         if isDown && machine.isHolding {

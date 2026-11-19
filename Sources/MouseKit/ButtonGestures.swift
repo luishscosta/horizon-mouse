@@ -193,7 +193,13 @@ public struct ButtonGestureMachine: Sendable {
     public let handled: Set<MouseGesture>
     private(set) var phase = Phase.idle
 
-    public init(handled: Set<MouseGesture>) { self.handled = handled }
+    /// Buttons with no native drag (the side buttons): pointer motion during a press must not turn a click into a native drag.
+    public let ignoresMovement: Bool
+
+    public init(handled: Set<MouseGesture>, ignoresMovement: Bool = false) {
+        self.handled = handled
+        self.ignoresMovement = ignoresMovement
+    }
 
     public var isIdle: Bool { phase == .idle }
 
@@ -229,6 +235,7 @@ public struct ButtonGestureMachine: Sendable {
     public mutating func move(dx: Double, dy: Double) -> (pass: Bool, outputs: [GestureOutput]) {
         switch phase {
         case .pressed(let at, let x, let y):
+            if ignoresMovement && !handled.contains(.drag) { return (false, []) }
             let total = (x + dx, y + dy)
             guard hypot(total.0, total.1) >= Self.dragThreshold else {
                 phase = .pressed(at: at, dx: total.0, dy: total.1)
