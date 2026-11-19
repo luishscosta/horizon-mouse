@@ -16,4 +16,13 @@ missing=$(perl -ne 'while (/\bL\("((?:[^"\\]|\\.)*)"/g) { print "$1\n" }' Source
 done)
 if [ -n "$missing" ]; then printf 'Missing translations:\n%s\n' "$missing"; exit 1; fi
 echo "Translations: every language covers every key"
+# The release workflow derives the next version from commit messages.
+check_version() { got=$(printf '%s\n' "$2" | bash scripts/next-version.sh "$1"); [ "$got" = "$3" ] || { echo "next-version: expected '$3', got '$got' for: $2"; exit 1; }; }
+check_version 0.3.9 "feat: x" 0.4.0
+check_version 0.3.9 $'fix: a\nfeat(ui): b' 0.4.0
+check_version 0.3.9 "fix: a" 0.3.10
+check_version 0.3.9 "docs: a" ""
+check_version 0.3.9 "feat!: a" 1.0.0
+check_version 0.3.9 $'chore: x\n\nBREAKING CHANGE: y' 1.0.0
+echo "Release versions: commit messages map to the right bump"
 git diff --check

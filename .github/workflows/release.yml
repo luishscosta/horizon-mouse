@@ -1,11 +1,12 @@
 name: Release
-# Publishes a release when a merge to main bumps the version in Resources/Info.plist.
+# Publishes a release after every merge to main that warrants one: the version comes from the commit messages
+# (feat: minor, fix:/perf: patch, ! or BREAKING CHANGE major; docs, ci, chore... publish nothing). A version raised by hand in
+# Resources/Info.plist and not released yet is published as it is.
 # Needs the repository secrets HORIZON_SIGN_CERT_P12 (base64 .p12 of the signing certificate) and
 # HORIZON_SIGN_CERT_PASSWORD. TAP_DEPLOY_KEY (a write deploy key of luishscosta/homebrew-tap) is optional: with it the Homebrew tap is updated too.
 on:
   push:
     branches: [main]
-    paths: [Resources/Info.plist]
   workflow_dispatch:
 
 concurrency: release
@@ -21,22 +22,34 @@ jobs:
       TAP_KEY: ${{ secrets.TAP_DEPLOY_KEY }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Check the version is new
+      - name: Decide the version
         id: version
         run: |
-          version=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" Resources/Info.plist)
-          echo "version=$version" >> "$GITHUB_OUTPUT"
-          if gh release view "v$version" >/dev/null 2>&1; then
-            echo "v$version already released, nothing to do."
-            echo "new=false" >> "$GITHUB_OUTPUT"
+          plist=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" Resources/Info.plist)
+          if ! gh release view "v$plist" >/dev/null 2>&1; then
+            version=$plist   # raised by hand and not released yet
           else
-            echo "new=true" >> "$GITHUB_OUTPUT"
+            last=$(gh release list --limit 1 --exclude-drafts --json tagName --jq '.[0].tagName' | sed 's/^v//')
+            version=$(git log "v$last..HEAD" --no-merges --format=%B | bash scripts/next-version.sh "$last")
           fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if [ -n "$version" ]; then echo "new=true" >> "$GITHUB_OUTPUT"; else echo "Nothing to release."; echo "new=false" >> "$GITHUB_OUTPUT"; fi
 
       - name: Test
         if: steps.version.outputs.new == 'true'
         run: bash scripts/test.sh
+
+      - name: Set the version for this build
+        if: steps.version.outputs.new == 'true'
+        run: |
+          version=${{ steps.version.outputs.version }}
+          if [ "$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" Resources/Info.plist)" != "$version" ]; then
+            build=$(/usr/libexec/PlistBuddy -c "Print CFBundleVersion" Resources/Info.plist)
+            /usr/libexec/PlistBuddy -c "Set CFBundleShortVersionString $version" -c "Set CFBundleVersion $((build + 1))" Resources/Info.plist
+          fi
 
       - name: Import signing certificate
         if: steps.version.outputs.new == 'true'
@@ -68,9 +81,9 @@ jobs:
         run: |
           version=${{ steps.version.outputs.version }}
           awk -v v="$version" '$0 ~ "^## \\[" v "\\]" {on=1; next} /^## \[/ {on=0} on' CHANGELOG.md > notes.md
-          [ -s notes.md ] || echo "See the [changelog](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md)." > notes.md
+          if [ -s notes.md ]; then notes=(--notes-file notes.md); else notes=(--generate-notes); fi
           gh release create "v$version" dist/HorizonMouse.dmg dist/HorizonMouse.zip dist/SHA256SUMS.txt \
-            --title "Horizon Mouse $version" --notes-file notes.md --target "$GITHUB_SHA"
+            --title "Horizon Mouse $version" "${notes[@]}" --target "$GITHUB_SHA"
 
       - name: Update Homebrew tap
         if: steps.version.outputs.new == 'true' && env.TAP_KEY != ''
