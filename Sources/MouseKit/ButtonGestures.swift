@@ -18,7 +18,7 @@ public enum MouseGesture: String, Codable, CaseIterable, Sendable {
 }
 
 public enum MouseAction: String, Codable, CaseIterable, Sendable {
-    case standard, back, forward, shortcut, missionControl, showDesktop, switchSpaces, none
+    case standard, back, forward, shortcut, missionControl, showDesktop, switchSpaces, whip, none
     public var title: String {
         switch self {
         case .standard: L("Mouse default")
@@ -28,6 +28,7 @@ public enum MouseAction: String, Codable, CaseIterable, Sendable {
         case .missionControl: "Mission Control"
         case .showDesktop: L("Show Desktop")
         case .switchSpaces: L("Switch Desktops")
+        case .whip: L("Toggle whip mode")
         case .none: L("No action")
         }
     }

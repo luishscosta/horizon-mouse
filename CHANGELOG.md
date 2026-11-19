@@ -4,6 +4,9 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 
 ## [Unreleased]
 
+### Added
+- **Whip mode**, a fun option: a whip hangs from the pointer, swings with the mouse and cracks on click. The new **Whip** tab picks one of six models and the color (wheel, presets, brightness), and sets a macro (shortcut and/or text, optionally with a modifier held) that runs on each crack in the apps you choose. A new button action, **Toggle whip mode**, turns it on and off.
+
 ## [0.3.9] - 2026-11-18
 
 ### Fixed
