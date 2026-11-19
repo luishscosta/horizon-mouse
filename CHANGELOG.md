@@ -4,6 +4,8 @@ All notable changes are documented here. Format based on [Keep a Changelog](http
 
 ## [Unreleased]
 
+## [0.3.9] - 2026-11-18
+
 ### Fixed
 - Clicking a side button while the pointer is moving no longer loses the click (it used to turn into a native drag and skip the mapped action, e.g. Mission Control).
 - Custom button commands no longer need a few presses to "wake up" after the Mac has been idle. The app now turns its event tap straight back on when the system disables it, checks it every quarter of a second, and is no longer throttled by App Nap while it runs in the background.
