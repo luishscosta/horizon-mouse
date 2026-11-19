@@ -13,6 +13,7 @@ struct RootView: View {
                 Group {
                     switch model.tab {
                     case .buttons: ButtonsView(model: model)
+                    case .whip: WhipSettingsView(model: model)
                     case .scroll: ScrollSettingsView(model: model)
                     case .settings: AppSettingsView(model: model)
                     }
@@ -631,3 +632,215 @@ let appVersion: String = {
     guard let short = info["CFBundleShortVersionString"] as? String else { return "dev" }
     return info["CFBundleVersion"].map { "\(short) (\($0))" } ?? short
 }()
+
+// MARK: - Whip
+
+/// One page, no scrolling: a stage that shows the whip in its color on the left, the choices on the right.
+struct WhipSettingsView: View {
+    @ObservedObject var model: AppModel
+    private static let presets: [(String, String)] = [
+        ("#8C5426", "Leather"), ("#C0392B", "Red"), ("#E67E22", "Orange"), ("#E0B21B", "Gold"),
+        ("#2FAE5B", "Green"), ("#1FA7B3", "Teal"), ("#2F7DD6", "Blue"), ("#9B4FD6", "Violet"),
+    ]
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 24) {
+            VStack(alignment: .leading, spacing: 14) {
+                WhipStage(model: model.whipModel.wrappedValue, color: model.whipColor.wrappedValue)
+                    .frame(height: 250)
+                ToggleRow(icon: "scribble.variable", title: L("Whip mode"),
+                          description: L("Replaces the pointer with a whip that swings with the mouse and cracks on click."), isOn: model.whipMode)
+                macro
+            }
+            .frame(width: 300)
+            VStack(alignment: .leading, spacing: 18) {
+                models
+                color
+                apps
+            }
+            .frame(maxWidth: .infinity, alignment: .topLeading)
+        }
+        .frame(maxWidth: 900)
+    }
+
+    private var models: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(L("Model")).font(.headline)
+            HStack(spacing: 8) {
+                ForEach(WhipModel.allCases) { item in
+                    let selected = model.whipModel.wrappedValue == item
+                    Button { model.whipModel.wrappedValue = item } label: {
+                        VStack(spacing: 4) {
+                            WhipStage(model: item, color: model.whipColor.wrappedValue, animated: false).frame(height: 78)
+                            Text(item.title).font(.caption).fontWeight(selected ? .semibold : .regular).lineLimit(1).minimumScaleFactor(0.7)
+                        }
+                        .padding(6)
+                        .frame(maxWidth: .infinity)
+                        .background(RoundedRectangle(cornerRadius: 9).fill(Color.primary.opacity(selected ? 0.08 : 0.03)))
+                        .overlay(RoundedRectangle(cornerRadius: 9).stroke(selected ? Color.accentColor : Color.secondary.opacity(0.2), lineWidth: selected ? 2 : 1))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(item.title)
+                }
+            }
+        }
+    }
+
+    private var color: some View {
+        let hsb = model.whipHSB
+        return VStack(alignment: .leading, spacing: 8) {
+            Text(L("Color")).font(.headline)
+            HStack(alignment: .top, spacing: 22) {
+                ColorWheel(hue: hsb.h, saturation: hsb.s, brightness: hsb.b) { model.setWhipWheel(hue: $0, saturation: $1) }
+                    .frame(width: 150, height: 150)
+                VStack(alignment: .leading, spacing: 14) {
+                    LazyVGrid(columns: Array(repeating: GridItem(.fixed(30), spacing: 10), count: 4), alignment: .leading, spacing: 10) {
+                        ForEach(Self.presets, id: \.0) { hex, name in
+                            Button { model.setWhipColor(hex) } label: {
+                                Circle().fill(Color(hex: hex)).frame(width: 30, height: 30)
+                                    .overlay(Circle().stroke(Color.primary.opacity(model.whipColor.wrappedValue.hex == hex ? 0.9 : 0.15), lineWidth: 2))
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel(name)
+                        }
+                    }
+                    HStack {
+                        Text(L("Brightness")).font(.caption).foregroundStyle(.secondary)
+                        Slider(value: model.whipComponent(2), in: 0.15...1)
+                    }
+                    .frame(maxWidth: 260)
+                }
+            }
+        }
+    }
+
+    private var apps: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(L("Apps")).font(.headline)
+                Text(L("Where the whip talks and runs the macro")).font(.caption).foregroundStyle(.secondary)
+            }
+            FlowLayout(spacing: 6) {
+                ForEach(model.whipApps, id: \.self) { id in
+                    HStack(spacing: 4) {
+                        Text(model.whipAppName(id)).font(.callout)
+                        Button { model.removeWhipApp(id) } label: { Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary) }
+                            .buttonStyle(.plain).accessibilityLabel(L("Remove"))
+                    }
+                    .padding(.horizontal, 9).padding(.vertical, 4)
+                    .background(Capsule().fill(Color.primary.opacity(0.07)))
+                }
+                Button(L("Add app…")) { model.addWhipApp() }.controlSize(.small)
+            }
+        }
+    }
+
+    private var macro: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(L("Macro on crack")).font(.headline)
+            HStack {
+                Text(model.whipShortcut?.display ?? L("Not set"))
+                    .font(.system(size: 15, weight: .semibold, design: .rounded))
+                    .frame(width: 70, height: 26)
+                    .background(RoundedRectangle(cornerRadius: 6).fill(Color.primary.opacity(0.06)))
+                Button(model.recordingWhip ? L("Press the shortcut… (Esc cancels)") : L("Record shortcut")) {
+                    if model.recordingWhip { model.stopRecording() } else { model.recordWhipShortcut() }
+                }
+                .controlSize(.small).lineLimit(1)
+                if model.whipShortcut != nil { Button(L("Clear")) { model.clearWhipShortcut() }.controlSize(.small) }
+            }
+            HStack {
+                TextField(L("Text to type"), text: model.whipText).textFieldStyle(.roundedBorder)
+                Toggle(L("Return"), isOn: model.whipEnter).toggleStyle(.checkbox)
+            }
+            Picker(L("Run macro with"), selection: model.whipMacroKey) {
+                ForEach(HorizontalScrollKey.allCases, id: \.self) {
+                    Text($0 == .none ? L("Every click") : $0.title + " + " + L("Click")).tag($0)
+                }
+            }
+            .controlSize(.small)
+        }
+    }
+}
+
+/// The whip drawn in its color on a stage that glows with that color.
+struct WhipStage: View {
+    let model: WhipModel
+    let color: Color
+    var animated = true
+
+    var body: some View {
+        TimelineView(.animation(minimumInterval: 1.0 / 30, paused: !animated)) { timeline in
+            let phase = animated ? timeline.date.timeIntervalSinceReferenceDate * 1.4 : 0.6
+            Canvas { ctx, size in
+                var ctx = ctx
+                let art = WhipArt.preview(model, in: size, phase: phase)
+                WhipArt.draw(&ctx, art.points, model: model, color: color, scale: art.scale)
+            }
+        }
+        .background(
+            RoundedRectangle(cornerRadius: animated ? 14 : 6)
+                .fill(RadialGradient(colors: [color.opacity(animated ? 0.28 : 0.14), Color.primary.opacity(0.04)], center: .bottom, startRadius: 0, endRadius: 260))
+        )
+    }
+}
+
+/// Hue by angle, saturation by distance from the center; the wheel dims with the brightness.
+struct ColorWheel: View {
+    let hue: Double
+    let saturation: Double
+    let brightness: Double
+    let onChange: (Double, Double) -> Void
+
+    var body: some View {
+        GeometryReader { geo in
+            let r = min(geo.size.width, geo.size.height) / 2
+            ZStack {
+                Circle().fill(AngularGradient(gradient: Gradient(colors: (0...12).map { Color(hue: Double($0) / 12, saturation: 1, brightness: 1) }), center: .center))
+                Circle().fill(RadialGradient(colors: [.white, .white.opacity(0)], center: .center, startRadius: 0, endRadius: r))
+                Circle().fill(.black.opacity(1 - brightness))
+                Circle().stroke(Color.primary.opacity(0.2), lineWidth: 1)
+                Circle().fill(Color(hue: hue, saturation: saturation, brightness: brightness))
+                    .frame(width: 20, height: 20)
+                    .overlay(Circle().stroke(.white, lineWidth: 3))
+                    .shadow(radius: 2)
+                    .position(x: r + cos(hue * 2 * .pi) * saturation * r, y: r + sin(hue * 2 * .pi) * saturation * r)
+            }
+            .contentShape(Circle())
+            .gesture(DragGesture(minimumDistance: 0).onChanged { drag in
+                let dx = drag.location.x - r, dy = drag.location.y - r
+                var h = atan2(dy, dx) / (2 * .pi)
+                if h < 0 { h += 1 }
+                onChange(h, min(1, hypot(dx, dy) / r))
+            })
+        }
+        .aspectRatio(1, contentMode: .fit)
+        .accessibilityLabel(L("Color"))
+    }
+}
+
+/// Lays chips out left to right and wraps them onto new lines.
+struct FlowLayout: Layout {
+    var spacing: CGFloat = 6
+
+    func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {
+        arrange(subviews, width: proposal.width ?? 400).size
+    }
+
+    func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) {
+        for (view, point) in zip(subviews, arrange(subviews, width: bounds.width).points) {
+            view.place(at: CGPoint(x: bounds.minX + point.x, y: bounds.minY + point.y), proposal: .unspecified)
+        }
+    }
+
+    private func arrange(_ subviews: Subviews, width: CGFloat) -> (points: [CGPoint], size: CGSize) {
+        var points: [CGPoint] = [], x: CGFloat = 0, y: CGFloat = 0, row: CGFloat = 0, widest: CGFloat = 0
+        for view in subviews {
+            let size = view.sizeThatFits(.unspecified)
+            if x > 0 && x + size.width > width { x = 0; y += row + spacing; row = 0 }
+            points.append(CGPoint(x: x, y: y))
+            x += size.width + spacing; row = max(row, size.height); widest = max(widest, x - spacing)
+        }
+        return (points, CGSize(width: widest, height: y + row))
+    }
+}

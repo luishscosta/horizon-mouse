@@ -5,11 +5,12 @@ import ServiceManagement
 import SwiftUI
 
 enum AppTab: String, CaseIterable, Identifiable {
-    case buttons, scroll, settings
+    case buttons, scroll, whip, settings
     var id: Self { self }
     var title: String {
         switch self {
         case .buttons: L("Buttons")
+        case .whip: L("Whip")
         case .scroll: L("Scrolling")
         case .settings: L("Settings")
         }
@@ -17,6 +18,7 @@ enum AppTab: String, CaseIterable, Identifiable {
     var heading: (String, String) {
         switch self {
         case .buttons: (L("Buttons and gestures"), L("Pick the button, set the gestures and try them."))
+        case .whip: (L("Whip"), L("Swing a whip with the mouse, pick its color and what it does."))
         case .scroll: (L("Scrolling"), L("Main wheel pace and switching desktops with the side wheel."))
         case .settings: (L("Settings"), L("How Horizon Mouse runs on your Mac and in which language."))
         }
@@ -40,9 +42,13 @@ final class AppModel: ObservableObject {
     @Published var languageChanged = false
 
     private var keyMonitor: Any?
+    private let whip = WhipOverlay()
+    @Published var recordingWhip = false
 
     init() {
         mouse.onChange = { [weak self] in self?.objectWillChange.send() }
+        whip.onSnap = { [weak self] in self?.runWhipMacro() }
+        mouse.onWhip = { [weak self] in guard let self else { return }; var mode = self.whipMode; mode.wrappedValue.toggle() }
         mouse.onIdentify = { [weak self] button in self?.identified(button) }
         // Pressing a button jumps the editor to it, so the drawing follows the hand.
         mouse.onButtonPressed = { [weak self] slot in
@@ -53,6 +59,7 @@ final class AppModel: ObservableObject {
 
     func start() {
         mouse.start()
+        whip.isOn = whipMode.wrappedValue
     }
 
     // MARK: Buttons
@@ -112,18 +119,28 @@ final class AppModel: ObservableObject {
     func recordShortcut(_ gesture: MouseGesture) {
         stopRecording()
         recordingGesture = gesture
-        if mouse.beginKeyCapture({ [weak self] code, flags in self?.captured(gesture, code, flags) }) { return }
+        arm { [weak self] in self?.setShortcut(gesture, $0) }
+    }
+
+    func recordWhipShortcut() {
+        stopRecording()
+        recordingWhip = true
+        arm { [weak self] in WhipPrefs.shortcut = $0; self?.objectWillChange.send() }
+    }
+
+    private func arm(_ apply: @escaping (KeyShortcut) -> Void) {
+        if mouse.beginKeyCapture({ [weak self] code, flags in self?.captured(code, flags, apply: apply) }) { return }
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
-            self?.captured(gesture, event.keyCode, CGEventFlags(rawValue: UInt64(event.modifierFlags.rawValue)),
-                           character: event.charactersIgnoringModifiers)
+            self?.captured(event.keyCode, CGEventFlags(rawValue: UInt64(event.modifierFlags.rawValue)),
+                           character: event.charactersIgnoringModifiers, apply: apply)
             return nil
         }
     }
 
-    private func captured(_ gesture: MouseGesture, _ code: UInt16, _ flags: CGEventFlags, character: String? = nil) {
+    private func captured(_ code: UInt16, _ flags: CGEventFlags, character: String? = nil, apply: (KeyShortcut) -> Void) {
         defer { stopRecording() }
         if code == UInt16(kVK_Escape) && flags.intersection(KeyShortcut.modifierMask).isEmpty { return }
-        setShortcut(gesture, KeyShortcut.make(keyCode: code, flags: flags, character: character))
+        apply(KeyShortcut.make(keyCode: code, flags: flags, character: character))
     }
 
     func setShortcut(_ gesture: MouseGesture, _ shortcut: KeyShortcut) {
@@ -139,6 +156,7 @@ final class AppModel: ObservableObject {
         if let keyMonitor { NSEvent.removeMonitor(keyMonitor) }
         keyMonitor = nil
         recordingGesture = nil
+        recordingWhip = false
     }
 
     func resetMappings() { mouse.profile = .defaults }
@@ -180,6 +198,84 @@ final class AppModel: ObservableObject {
     var runInBackground: Binding<Bool> {
         Binding(get: { UserDefaults.standard.object(forKey: "Mesa.app.background") as? Bool ?? true },
                 set: { UserDefaults.standard.set($0, forKey: "Mesa.app.background"); self.objectWillChange.send() })
+    }
+    // MARK: Whip
+
+    var whipColor: Binding<Color> {
+        Binding(get: { Color(hex: WhipPrefs.color) }, set: { WhipPrefs.color = $0.hex; self.whip.reload(); self.objectWillChange.send() })
+    }
+    /// Hue, saturation or brightness (0...1) of the lash color; sliders replace the system color panel, which can open off screen.
+    func whipComponent(_ index: Int) -> Binding<Double> {
+        Binding(get: {
+            let c = NSColor(Color(hex: WhipPrefs.color)).usingColorSpace(.sRGB) ?? .brown
+            return Double([c.hueComponent, c.saturationComponent, c.brightnessComponent][index])
+        }, set: { value in
+            let c = NSColor(Color(hex: WhipPrefs.color)).usingColorSpace(.sRGB) ?? .brown
+            var hsb = [c.hueComponent, c.saturationComponent, c.brightnessComponent]
+            hsb[index] = CGFloat(value)
+            WhipPrefs.color = Color(nsColor: NSColor(hue: hsb[0], saturation: hsb[1], brightness: hsb[2], alpha: 1)).hex
+            self.whip.reload(); self.objectWillChange.send()
+        })
+    }
+    var whipModel: Binding<WhipModel> {
+        Binding(get: { WhipPrefs.model }, set: { WhipPrefs.model = $0; self.whip.reload(); self.objectWillChange.send() })
+    }
+    /// Hue, saturation and brightness (0...1) of the lash color, for the color wheel.
+    var whipHSB: (h: Double, s: Double, b: Double) {
+        let c = NSColor(Color(hex: WhipPrefs.color)).usingColorSpace(.sRGB) ?? .brown
+        return (Double(c.hueComponent), Double(c.saturationComponent), Double(c.brightnessComponent))
+    }
+    func setWhipWheel(hue: Double, saturation: Double) {
+        let b = max(whipHSB.b, 0.25)   // a black pick would lose the hue
+        WhipPrefs.color = Color(nsColor: NSColor(hue: hue, saturation: saturation, brightness: b, alpha: 1)).hex
+        whip.reload(); objectWillChange.send()
+    }
+    func setWhipColor(_ hex: String) { WhipPrefs.color = hex; whip.reload(); objectWillChange.send() }
+    var whipMacroKey: Binding<HorizontalScrollKey> {
+        Binding(get: { WhipPrefs.macroKey }, set: { WhipPrefs.macroKey = $0; self.objectWillChange.send() })
+    }
+    var whipText: Binding<String> {
+        Binding(get: { WhipPrefs.text }, set: { WhipPrefs.text = $0; self.objectWillChange.send() })
+    }
+    var whipEnter: Binding<Bool> {
+        Binding(get: { WhipPrefs.enter }, set: { WhipPrefs.enter = $0; self.objectWillChange.send() })
+    }
+    var whipShortcut: KeyShortcut? { WhipPrefs.shortcut }
+    func clearWhipShortcut() { WhipPrefs.shortcut = nil; objectWillChange.send() }
+    var whipApps: [String] { WhipPrefs.apps }
+
+    func whipAppName(_ bundleID: String) -> String {
+        NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID).map { FileManager.default.displayName(atPath: $0.path).replacingOccurrences(of: ".app", with: "") } ?? bundleID
+    }
+
+    func removeWhipApp(_ bundleID: String) {
+        WhipPrefs.apps = WhipPrefs.apps.filter { $0 != bundleID }
+        whip.reload(); objectWillChange.send()
+    }
+
+    func addWhipApp() {
+        let panel = NSOpenPanel()
+        panel.directoryURL = URL(fileURLWithPath: "/Applications")
+        panel.allowedContentTypes = [.application]
+        panel.allowsMultipleSelection = false
+        guard panel.runModal() == .OK, let url = panel.url, let id = Bundle(url: url)?.bundleIdentifier, !WhipPrefs.apps.contains(id) else { return }
+        WhipPrefs.apps += [id]
+        whip.reload(); objectWillChange.send()
+    }
+
+    /// Runs on every snap in a chosen app (never in this app): the text first, then the shortcut.
+    private func runWhipMacro() {
+        guard whip.inTargetApp, NSWorkspace.shared.frontmostApplication?.processIdentifier != ProcessInfo.processInfo.processIdentifier else { return }
+        let text = WhipPrefs.text, enter = WhipPrefs.enter
+        if !text.isEmpty || enter { mouse.typeText(text, enter: enter) }
+        if let shortcut = WhipPrefs.shortcut {
+            DispatchQueue.main.asyncAfter(deadline: .now() + (text.isEmpty && !enter ? 0 : 0.15)) { [weak self] in self?.mouse.playShortcut(shortcut) }
+        }
+    }
+
+    var whipMode: Binding<Bool> {
+        Binding(get: { UserDefaults.standard.bool(forKey: "Mesa.app.whip") },
+                set: { UserDefaults.standard.set($0, forKey: "Mesa.app.whip"); self.whip.isOn = $0; self.objectWillChange.send() })
     }
     var showMenuBarIcon: Binding<Bool> {
         Binding(get: { UserDefaults.standard.object(forKey: "Mesa.app.menubar") as? Bool ?? true },

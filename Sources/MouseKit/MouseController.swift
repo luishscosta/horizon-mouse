@@ -8,6 +8,7 @@ private let log = Logger(subsystem: "io.github.luishscosta.horizonmouse", catego
 @MainActor
 public final class MouseController {
     public var onChange: (() -> Void)?
+    public var onWhip: (() -> Void)?
     public private(set) var status = L("Paused")
     public var isEnabled: Bool { capture.isEnabled }
     public private(set) var diagnostics = "Mouse: waiting for first observation."
@@ -573,7 +574,25 @@ public final class MouseController {
                 NSWorkspace.shared.open(URL(fileURLWithPath: "/System/Applications/Mission Control.app"))
             }
         case .showDesktop: _ = MBDockNotification("com.apple.showdesktop.awake" as CFString)
+        case .whip: onWhip?()
         }
+    }
+
+    /// Whip macro: sends a recorded shortcut to the frontmost app.
+    public func playShortcut(_ shortcut: KeyShortcut) { postKey(CGKeyCode(shortcut.keyCode), flags: shortcut.playbackFlags) }
+
+    /// Whip macro: types text into the frontmost app, then presses Return if asked.
+    public func typeText(_ text: String, enter: Bool) {
+        for character in text {
+            var units = Array(String(character).utf16)
+            for down in [true, false] {
+                guard let event = CGEvent(keyboardEventSource: nil, virtualKey: 0, keyDown: down) else { continue }
+                event.keyboardSetUnicodeString(stringLength: units.count, unicodeString: &units)
+                event.setIntegerValueField(.eventSourceUserData, value: marker)
+                event.post(tap: .cghidEventTap)
+            }
+        }
+        if enter { postKey(36, flags: []) }
     }
 
     /// Posts at the HID level, upstream of the system shortcut handling, pressing the modifiers like a keyboard would.
