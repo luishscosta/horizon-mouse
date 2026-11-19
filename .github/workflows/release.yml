@@ -1,7 +1,7 @@
 name: Release
 # Publishes a release when a merge to main bumps the version in Resources/Info.plist.
 # Needs the repository secrets HORIZON_SIGN_CERT_P12 (base64 .p12 of the signing certificate) and
-# HORIZON_SIGN_CERT_PASSWORD. TAP_GITHUB_TOKEN is optional: with it the Homebrew tap is updated too.
+# HORIZON_SIGN_CERT_PASSWORD. TAP_DEPLOY_KEY (a write deploy key of luishscosta/homebrew-tap) is optional: with it the Homebrew tap is updated too.
 on:
   push:
     branches: [main]
@@ -18,7 +18,7 @@ jobs:
     runs-on: macos-latest
     env:
       GH_TOKEN: ${{ github.token }}
-      TAP_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
+      TAP_KEY: ${{ secrets.TAP_DEPLOY_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -73,11 +73,13 @@ jobs:
             --title "Horizon Mouse $version" --notes-file notes.md --target "$GITHUB_SHA"
 
       - name: Update Homebrew tap
-        if: steps.version.outputs.new == 'true' && env.TAP_TOKEN != ''
+        if: steps.version.outputs.new == 'true' && env.TAP_KEY != ''
         run: |
           version=${{ steps.version.outputs.version }}
           sha=$(awk '/HorizonMouse.zip/ {print $1}' dist/SHA256SUMS.txt)
-          git clone "https://x-access-token:$TAP_TOKEN@github.com/luishscosta/homebrew-tap.git" tap
+          printf "%s\n" "$TAP_KEY" > "$RUNNER_TEMP/tap_key" && chmod 600 "$RUNNER_TEMP/tap_key"
+          export GIT_SSH_COMMAND="ssh -i $RUNNER_TEMP/tap_key -o StrictHostKeyChecking=accept-new"
+          git clone git@github.com:luishscosta/homebrew-tap.git tap
           cd tap
           sed -i '' -E "s/^  version \".*\"/  version \"$version\"/; s/^  sha256 \".*\"/  sha256 \"$sha\"/" Casks/horizon-mouse.rb
           git config user.name "github-actions[bot]"
